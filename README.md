@@ -1,2 +1,2 @@
 # snowflake-ci-cd
-This is a git repo for internal development of Snowflake CI/CD Integration.
+This Git repository is dedicated to the internal development of the Snowflake CI/CD Integration.
