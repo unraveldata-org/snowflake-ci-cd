@@ -103,9 +103,9 @@ def get_pr_description():
     description = pr_data["body"]
     return description
 
-def send_to_api(sql_queries, api_endpoint):
+def send_to_api(sql_queries, api_endpoint, platform_name):
     try:
-        data = {"sql_queries": sql_queries}
+        data = {"sql_queries": sql_queries, "platform": platform_name}
         response = requests.post(api_endpoint, json=data)
 
         return {"status": response.status_code, "content": response.text}
@@ -171,7 +171,14 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
 
 if __name__ == "__main__":
     raw_description = get_pr_description()
-    print(raw_description)
+    if("snowflake" in raw_description.lower()):
+        platform='snowflake'
+    elseif("bigquery" in raw_description.lower()):
+        platform='bigquery'
+    elseif("databricks" in raw_description.lower()):
+        platform='databricks'
+    else:
+        print("Unsupported platform")
     file_content=get_raw_file_content()
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
@@ -188,9 +195,9 @@ if __name__ == "__main__":
 
     # Post comment on PR
     if api_response.get("status") == 200:
-        print(f"SQL Queries extraction successful. API Response: {api_response}")
+        print(f"SQL Queries successfully processed . API Response: {api_response}")
     else:
-        print(f"SQL Queries extraction failed. API Response: {api_response}")
+        print(f"SQL Queries processing failed. API Response: {api_response}")
 
     post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
     print(post_response)
