@@ -88,6 +88,21 @@ def get_raw_file_content(get_file_name_flag=False):
 
     return file_contents
 
+def get_pr_description():
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+    url = f"https://api.github.com/repos/{repo_name}/pulls/{pr_number}"
+
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    pr_data = response.json()
+    description = pr_data["body"]
+    return description
+
 def send_to_api(sql_queries, api_endpoint):
     try:
         data = {"sql_queries": sql_queries}
@@ -155,6 +170,8 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
         return {"status": 500, "error": f"Error posting comment: {e}"}
 
 if __name__ == "__main__":
+    raw_description = get_pr_description()
+    print(raw_description)
     file_content=get_raw_file_content()
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
