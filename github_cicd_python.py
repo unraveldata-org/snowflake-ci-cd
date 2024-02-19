@@ -12,6 +12,7 @@ from jira import JIRA
 from bs4 import BeautifulSoup
 import markdown
 import subprocess
+import sqlparse
 
 pr_number = os.getenv("PR_NUMBER")
 repo_name = os.getenv("GITHUB_REPOSITORY")
