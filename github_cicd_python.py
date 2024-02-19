@@ -173,9 +173,9 @@ if __name__ == "__main__":
     raw_description = get_pr_description()
     if("snowflake" in raw_description.lower()):
         platform='snowflake'
-    elseif("bigquery" in raw_description.lower()):
+    elif("bigquery" in raw_description.lower()):
         platform='bigquery'
-    elseif("databricks" in raw_description.lower()):
+    elif("databricks" in raw_description.lower()):
         platform='databricks'
     else:
         print("Unsupported platform")
