@@ -21,7 +21,7 @@ access_token = os.getenv("GITHUB_TOKEN")
 pr_url = os.getenv("PR_URL")
 
 def extract_sql_queries(content):
-    statements = sqlparse.split(content.split("\n")
+    statements = sqlparse.split(content.split("\n"))
 
     # Filter out empty statements and remove comments
     sql_queries = [sqlparse.format(statement, strip_comments=True).strip() for statement in statements if statement.strip()]
