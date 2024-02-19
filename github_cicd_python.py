@@ -167,6 +167,7 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
         }
         # Parse the JSON-formatted string into a dictionary
         content_data = json.loads(api_response.get('content', {}))
+        print(content_data)
         
         for query, events in content_data.items():
             comment = format_comment(query, events['events'])
