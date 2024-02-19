@@ -170,12 +170,13 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
         return {"status": 500, "error": f"Error posting comment: {e}"}
 
 if __name__ == "__main__":
-    raw_description = get_pr_description()
-    if("snowflake" in raw_description.lower()):
+    description = get_pr_description()
+    print(description)
+    if("snowflake" in description.lower()):
         platform='snowflake'
-    elif("bigquery" in raw_description.lower()):
+    elif("bigquery" in description.lower()):
         platform='bigquery'
-    elif("databricks" in raw_description.lower()):
+    elif("databricks" in description.lower()):
         platform='databricks'
     else:
         print("Unsupported platform")
