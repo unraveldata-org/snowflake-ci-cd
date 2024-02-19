@@ -171,14 +171,13 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
 
 if __name__ == "__main__":
     description = get_pr_description()
-    print(description)
-    platform =''
+    platform =""
     if("snowflake" in description.lower()):
-        platform='snowflake'
+        platform="snowflake"
     elif("bigquery" in description.lower()):
-        platform='bigquery'
+        platform="bigquery"
     elif("databricks" in description.lower()):
-        platform='databricks'
+        platform="databricks"
     else:
         print("Unsupported platform")
     print(platform)
