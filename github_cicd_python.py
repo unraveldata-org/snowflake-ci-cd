@@ -203,14 +203,101 @@ if __name__ == "__main__":
 
     print(sql_statements)
     
-    # Send SQL queries to API
-    api_response = send_to_api(sql_statements, api_endpoint, platform)
+    # # Send SQL queries to API
+    # api_response = send_to_api(sql_statements, api_endpoint, platform)
 
-    # Post comment on PR
-    if api_response.get("status") == 200:
-        print(f"SQL Queries successfully processed . API Response: {api_response}")
-    else:
-        print(f"SQL Queries processing failed. API Response: {api_response}")
+    # # Post comment on PR
+    # if api_response.get("status") == 200:
+    #     print(f"SQL Queries successfully processed . API Response: {api_response}")
+    # else:
+    #     print(f"SQL Queries processing failed. API Response: {api_response}")
+
+    api_response={'content':{
+  "CREATE OR REPLACE TASK createProfileTable\n WAREHOUSE = UNRAVELDATA\n SCHEDULE = '60 MINUTE'\nAS\nCALL create_query_profile(dbname => 'UNRAVEL_SHARE',schemaname => 'SCHEMA_4823_T', credit => '1', days => '2');": {
+    "events": [
+      {
+        "action": "Ensure regular backups without impacting production hours.",
+        "detail": "Review and adjust the database backup schedule.",
+        "ext_info": "Backup Schedule: Nightly",
+        "impact_score": 6,
+        "name": "Backup Schedule Adjustment",
+        "remarks": "Balances backup frequency with system load."
+      },
+      {
+        "action": "Rewrite the query using appropriate indexes and filters.",
+        "detail": "Optimize the SQL query for better performance.",
+        "ext_info": "Example: Consider adding an index on frequently used columns.",
+        "impact_score": 8,
+        "name": "Query Optimization",
+        "remarks": "Improves query response time and reduces resource usage."
+      },
+      {
+        "action": "Identify underused and missing indexes; optimize existing ones.",
+        "detail": "Review and optimize database indexing strategy.",
+        "ext_info": "Database: my_database",
+        "impact_score": 9,
+        "name": "Indexing Strategy Review",
+        "remarks": "Improves query performance and reduces scan times."
+      }
+    ]
+  },
+  "CREATE OR REPLACE TASK replicate_history_query\n WAREHOUSE = UNRAVELDATA\n SCHEDULE = '60 MINUTE'\nAS\nCALL REPLICATE_HISTORY_QUERY('UNRAVEL_SHARE','SCHEMA_4823_T',2);": {
+    "events": [
+      {
+        "action": "Rewrite the query using appropriate indexes and filters.",
+        "detail": "Optimize the SQL query for better performance.",
+        "ext_info": "Example: Consider adding an index on frequently used columns.",
+        "impact_score": 8,
+        "name": "Query Optimization",
+        "remarks": "Improves query response time and reduces resource usage."
+      },
+      {
+        "action": "Implement data validation checks and fix inconsistencies.",
+        "detail": "Perform data consistency check on critical tables.",
+        "ext_info": "Tables: users, orders",
+        "impact_score": 7,
+        "name": "Data Consistency Check",
+        "remarks": "Ensures data integrity and accuracy."
+      },
+      {
+        "action": "Identify underused and missing indexes; optimize existing ones.",
+        "detail": "Review and optimize database indexing strategy.",
+        "ext_info": "Database: my_database",
+        "impact_score": 9,
+        "name": "Indexing Strategy Review",
+        "remarks": "Improves query performance and reduces scan times."
+      }
+    ]
+  },
+  "CREATE OR REPLACE TASK replicate_warehouse_and_realtime_query\n WAREHOUSE = UNRAVELDATA\n SCHEDULE = '30 MINUTE'\nAS\nBEGIN\n    CALL warehouse_proc('UNRAVEL_SHARE','SCHEMA_4823_T');\n\nCALL REPLICATE_REALTIME_QUERY('UNRAVEL_SHARE', 'SCHEMA_4823_T', 48);\n\nEND;": {
+    "events": [
+      {
+        "action": "Implement data validation checks and fix inconsistencies.",
+        "detail": "Perform data consistency check on critical tables.",
+        "ext_info": "Tables: users, orders",
+        "impact_score": 7,
+        "name": "Data Consistency Check",
+        "remarks": "Ensures data integrity and accuracy."
+      },
+      {
+        "action": "Implement data validation checks and fix inconsistencies.",
+        "detail": "Perform data consistency check on critical tables.",
+        "ext_info": "Tables: users, orders",
+        "impact_score": 7,
+        "name": "Data Consistency Check",
+        "remarks": "Ensures data integrity and accuracy."
+      },
+      {
+        "action": "Rewrite the query using appropriate indexes and filters.",
+        "detail": "Optimize the SQL query for better performance.",
+        "ext_info": "Example: Consider adding an index on frequently used columns.",
+        "impact_score": 8,
+        "name": "Query Optimization",
+        "remarks": "Improves query response time and reduces resource usage."
+      }
+    ]
+  }
+}}
 
     post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
     print(post_response)
