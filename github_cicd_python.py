@@ -172,6 +172,7 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
 if __name__ == "__main__":
     description = get_pr_description()
     print(description)
+    platform =''
     if("snowflake" in description.lower()):
         platform='snowflake'
     elif("bigquery" in description.lower()):
@@ -180,6 +181,7 @@ if __name__ == "__main__":
         platform='databricks'
     else:
         print("Unsupported platform")
+    print(platform)
     file_content=get_raw_file_content()
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
@@ -192,7 +194,7 @@ if __name__ == "__main__":
         sql_statements = extract_sql_statements(content)
     
     # Send SQL queries to API
-    api_response = send_to_api(sql_statements, api_endpoint)
+    api_response = send_to_api(sql_statements, api_endpoint, platform)
 
     # Post comment on PR
     if api_response.get("status") == 200:
