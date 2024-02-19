@@ -203,14 +203,14 @@ if __name__ == "__main__":
 
     print(sql_statements)
     
-    # # Send SQL queries to API
-    # api_response = send_to_api(sql_statements, api_endpoint, platform)
+    # Send SQL queries to API
+    api_response = send_to_api(sql_statements, api_endpoint, platform)
 
-    # # Post comment on PR
-    # if api_response.get("status") == 200:
-    #     print(f"SQL Queries successfully processed . API Response: {api_response}")
-    # else:
-    #     print(f"SQL Queries processing failed. API Response: {api_response}")
+    # Post comment on PR
+    if api_response.get("status") == 200:
+        print(f"SQL Queries successfully processed . API Response: {api_response}")
+    else:
+        print(f"SQL Queries processing failed. API Response: {api_response}")
 
-    # post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
-    # print(post_response)
+    post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
+    print(post_response)
