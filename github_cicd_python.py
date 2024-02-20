@@ -82,6 +82,7 @@ def get_raw_file_content(get_file_name_flag=False):
     url = f'https://api.github.com/repos/{repo_name}/pulls/{pr_number}/files'
     response = requests.get(url, headers=headers)
     files = response.json()
+    print(files)
     changed_folders = set(files["filename"].split("/", 1)[0] for file_data in files)
     print('changed_folders:',changed_folders)
     changed_files = [file['filename'] for file in files]
