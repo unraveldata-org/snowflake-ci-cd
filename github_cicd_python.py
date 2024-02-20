@@ -202,40 +202,118 @@ def get_platform_details(pr_description):
         print('Platforms information not found in the description, proceeding with snowflake as default platform.')
         return "snowflake"
 
+def get_pr_comments():
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+    url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    comments = response.json()
+    return comments
+
+def update_comments(api_response, existing_comments):
+    for query, events in existing_comments.items():
+        if query not in api_response:
+            # Comment is resolved, update the comment with "Status - Resolved"
+            update_comment_status(query, "Status - Resolved")
+
+def update_comment_status(query, status):
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+    # Get the comment ID using the GitHub API
+    comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
+    comments_response = requests.get(comments_url, headers=headers)
+    comments = comments_response.json()
+
+    comment_id = None
+    for comment in comments:
+        if query in comment['body']:
+            comment_id = comment['id']
+            break
+
+    if comment_id:
+        # Update the comment body with the new status
+        update_url = f"https://api.github.com/repos/{repo_name}/issues/comments/{comment_id}"
+        update_payload = {"body": f"Status - {status}"}
+        update_response = requests.patch(update_url, headers=headers, json=update_payload)
+
 if __name__ == "__main__":
-    pr_description = get_pr_description()
-    file_content=get_raw_file_content()
-    file_names=get_raw_file_content(get_file_name_flag=True)
-    file=file_names[0]
-    platform="snowflake"
-    if('snowflake' in file.lower() or 'sf' in file.lower()):
+    existing_comments = get_pr_comments()
+    if not existing_comments:
+        file_content=get_raw_file_content()
+        file_names=get_raw_file_content(get_file_name_flag=True)
+        file=file_names[0]
         platform="snowflake"
-    elif('bigquery' in file.lower() or 'bq' in file.lower()):
-        platform="bigquery"
-    elif('databricks' in file.lower() or 'dbx' in file.lower()):
-        platform="databricks"
-    else:
-        print('Platforms information not found in the description, proceeding with snowflake as default platform.')
-
-    print(platform)
-    # Get other details from GitHub Secrets
-    api_endpoint = os.getenv("API_ENDPOINT")
-    repo_owner = os.getenv("REPO_OWNER")
-    repo_name = os.getenv("GITHUB_REPOSITORY")
-    github_token = os.getenv("GITHUB_TOKEN")
-    # Extract SQL queries
-    for filename, content in file_content.items():
+        if('snowflake' in file.lower() or 'sf' in file.lower()):
+            platform="snowflake"
+        elif('bigquery' in file.lower() or 'bq' in file.lower()):
+            platform="bigquery"
+        elif('databricks' in file.lower() or 'dbx' in file.lower()):
+            platform="databricks"
+        else:
+            print('Platforms information not found in the description, proceeding with snowflake as default platform.')
+    
+        print(platform)
+        # Get other details from GitHub Secrets
+        api_endpoint = os.getenv("API_ENDPOINT")
+        repo_owner = os.getenv("REPO_OWNER")
+        repo_name = os.getenv("GITHUB_REPOSITORY")
+        github_token = os.getenv("GITHUB_TOKEN")
+        # Extract SQL queries
+        for filename, content in file_content.items():
+            
+            sql_statements = extract_sql_queries(content)
         
-        sql_statements = extract_sql_queries(content)
+        # Send SQL queries to API
+        api_response = send_to_api(sql_statements, api_endpoint, platform)
     
-    # Send SQL queries to API
-    api_response = send_to_api(sql_statements, api_endpoint, platform)
-
-    # Post comment on PR
-    if api_response.get("status") == 200:
-        print(f"SQL Queries successfully processed . API Response: {api_response}")
+        # Post comment on PR
+        if api_response.get("status") == 200:
+            print(f"SQL Queries successfully processed . API Response: {api_response}")
+        else:
+            print(f"SQL Queries processing failed. API Response: {api_response}")
+        
+        post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
+        #print(post_response)
     else:
-        print(f"SQL Queries processing failed. API Response: {api_response}")
+        file_content=get_raw_file_content()
+        file_names=get_raw_file_content(get_file_name_flag=True)
+        file=file_names[0]
+        platform="snowflake"
+        if('snowflake' in file.lower() or 'sf' in file.lower()):
+            platform="snowflake"
+        elif('bigquery' in file.lower() or 'bq' in file.lower()):
+            platform="bigquery"
+        elif('databricks' in file.lower() or 'dbx' in file.lower()):
+            platform="databricks"
+        else:
+            print('Platforms information not found in the description, proceeding with snowflake as default platform.')
     
-    post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
-    #print(post_response)
+        print(platform)
+        # Get other details from GitHub Secrets
+        api_endpoint = os.getenv("API_ENDPOINT")
+        repo_owner = os.getenv("REPO_OWNER")
+        repo_name = os.getenv("GITHUB_REPOSITORY")
+        github_token = os.getenv("GITHUB_TOKEN")
+        # Extract SQL queries
+        for filename, content in file_content.items():
+            
+            sql_statements = extract_sql_queries(content)
+        
+        # Send SQL queries to API
+        api_response = send_to_api(sql_statements, api_endpoint, platform)
+    
+        # Post comment on PR
+        if api_response.get("status") == 200:
+            print(f"SQL Queries successfully processed . API Response: {api_response}")
+        else:
+            print(f"SQL Queries processing failed. API Response: {api_response}")
+
+        update_comments(api_response, existing_comments)
