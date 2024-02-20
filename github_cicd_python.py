@@ -227,7 +227,8 @@ def update_comments(api_response, existing_comments):
         if match:
             sql_query = match.group(1)
             extracted_queries.append(sql_query)
-    
+    print('extracted_queries:',extracted_queries)
+    print('extracted_queriesq',extracted_queriesq)
     for query in extracted_queries:
         if query not in extracted_queriesq:
             # Comment is resolved, update the comment with "Status - Resolved"
@@ -243,7 +244,7 @@ def update_comment_status(query, status):
     comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
     comments_response = requests.get(comments_url, headers=headers)
     comments = comments_response.json()
-
+    print('comments',comments)
     comment_id = None
     for comment in comments:
         if query in comment['body']:
