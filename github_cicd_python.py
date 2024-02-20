@@ -199,6 +199,7 @@ def get_platform_details(pr_description):
     if(len(selected_platform)!=0):
         return selected_platform[0].lower()
     else:
+        print('Platforms information not found in the description, proceeding with snowflake as default platform.')
         return "snowflake"
 
 if __name__ == "__main__":
