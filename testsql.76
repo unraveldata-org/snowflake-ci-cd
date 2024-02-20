@@ -6,13 +6,6 @@ create history query Tasksqwpaq
 create profile replicate task
 */
 
-CREATE OR REPLACE TASK createProfileTable
- WAREHOUSE = UNRAVELDATA
- SCHEDULE = '60 MINUTE'
-AS
-CALL create_query_profile(dbname => 'UNRAVEL_SHARE',schemaname => 'SCHEMA_4823_T', credit =>
-'1', days => '2');
-
 /**
 create Task for replicating information schema query history sync with warehouse
 */
