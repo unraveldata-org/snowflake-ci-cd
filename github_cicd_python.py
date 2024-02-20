@@ -203,8 +203,8 @@ def get_platform_details(pr_description):
 
 if __name__ == "__main__":
     pr_description = get_pr_description()
-    print(pr_description)
     platform=get_platform_details(pr_description)
+    print('platform:',platform)
     file_content=get_raw_file_content()
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
