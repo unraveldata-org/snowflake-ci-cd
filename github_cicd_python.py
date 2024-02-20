@@ -181,6 +181,7 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
 
 if __name__ == "__main__":
     description = get_pr_description()
+    print(description)
     platform =""
     if("snowflake" in description.lower()):
         platform="snowflake"
