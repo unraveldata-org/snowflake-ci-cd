@@ -206,7 +206,7 @@ if __name__ == "__main__":
     pr_description = get_pr_description()
     file_content=get_raw_file_content()
     file_names=get_raw_file_content(get_file_name_flag=True)
-    file=filenames[0]
+    file=file_names[0]
     platform="snowflake"
     if('snowflake' in file.lower() or 'sf' in file.lower()):
         platform="snowflake"
