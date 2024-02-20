@@ -179,24 +179,32 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
     except Exception as e:
         return {"status": 500, "error": f"Error posting comment: {e}"}
 
+def get_platform_details(pr_description):
+    platforms_start = pr_description.find('**Platforms:')
+    if platforms_start != -1:
+        platforms_start += len('**Platforms:')
+        platforms_end = pr_description.find('**Changes:', platforms_start)
+        platforms_section = pr_description[platforms_start:platforms_end] if platforms_end != -1 else pr_description[platforms_start:]
+    
+        # Split the platforms section into lines
+        platform_lines = platforms_section.split('\n')
+    
+        # Extract selected platforms with [x]
+        selected_platform = [line.strip()[6:] for line in platform_lines if line.startswith('- [x]')]
+    
+        print(f'Selected Platform: {selected_platform}')
+    else:
+        print('Platforms information not found in the description, proceeding with snowflake as default platform.')
+        
+    if(len(selected_platform)!=0):
+        return selected_platform[0].lower()
+    else:
+        return "snowflake"
+
 if __name__ == "__main__":
     pr_description = get_pr_description()
     print(pr_description)
-    platform =""
-    if 'Platforms:' in pr_description:
-        platforms_start = pr_description.index('Platforms:') + len('Platforms:')
-        platforms_end = pr_description.index('**Changes:')
-        platforms_section = pr_description[platforms_start:platforms_end]
-
-        # Split the platforms section into lines
-        platform_lines = platforms_section.split('\n')
-
-        # Extract selected platforms
-        selected_platforms = [line.strip() for line in platform_lines if line.startswith('- [x]')]
-
-        print(f'Selected Platforms: {selected_platforms}')
-    else:
-        print('Platforms information not found in the description.')
+    platform=get_platform_details(pr_description)
     file_content=get_raw_file_content()
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
