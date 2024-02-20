@@ -183,14 +183,20 @@ if __name__ == "__main__":
     description = get_pr_description()
     print(description)
     platform =""
-    if("snowflake" in description.lower()):
-        platform="snowflake"
-    elif("bigquery" in description.lower()):
-        platform="bigquery"
-    elif("databricks" in description.lower()):
-        platform="databricks"
+    if 'Platforms:' in pr_description:
+        platforms_start = pr_description.index('Platforms:') + len('Platforms:')
+        platforms_end = pr_description.index('**Changes:')
+        platforms_section = pr_description[platforms_start:platforms_end]
+
+        # Split the platforms section into lines
+        platform_lines = platforms_section.split('\n')
+
+        # Extract selected platforms
+        selected_platforms = [line.strip() for line in platform_lines if line.startswith('- [x]')]
+
+        print(f'Selected Platforms: {selected_platforms}')
     else:
-        print("Unsupported platform")
+        print('Platforms information not found in the description.')
     file_content=get_raw_file_content()
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
