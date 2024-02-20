@@ -82,9 +82,6 @@ def get_raw_file_content(get_file_name_flag=False):
     url = f'https://api.github.com/repos/{repo_name}/pulls/{pr_number}/files'
     response = requests.get(url, headers=headers)
     files = response.json()
-    print(files)
-    changed_folders = set(files["filename"].split("/", 1)[0] for file_data in files)
-    print('changed_folders:',changed_folders)
     changed_files = [file['filename'] for file in files]
     if get_file_name_flag == True:
         return changed_files
@@ -210,6 +207,8 @@ if __name__ == "__main__":
     platform=get_platform_details(pr_description)
     print('platform:',platform)
     file_content=get_raw_file_content()
+    file_names=get_raw_file_content(get_file_name_flag=True)
+    print(file_names)
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
     repo_owner = os.getenv("REPO_OWNER")
