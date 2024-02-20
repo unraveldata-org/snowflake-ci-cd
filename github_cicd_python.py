@@ -246,7 +246,7 @@ def update_comment_status(query, status):
 
 if __name__ == "__main__":
     existing_comments = get_pr_comments()
-    print(existing_comments)
+    print(existing_comments[0].keys())
     if not existing_comments:
         file_content=get_raw_file_content()
         file_names=get_raw_file_content(get_file_name_flag=True)
