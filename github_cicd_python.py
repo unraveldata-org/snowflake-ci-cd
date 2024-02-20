@@ -167,7 +167,7 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
         }
         # Parse the JSON-formatted string into a dictionary
         content_data = json.loads(api_response.get('content', {}))
-        print(content_data)
+        #print(content_data)
         
         for query, events in content_data.items():
             comment = format_comment(query, events['events'])
@@ -190,7 +190,6 @@ if __name__ == "__main__":
         platform="databricks"
     else:
         print("Unsupported platform")
-    print(platform)
     file_content=get_raw_file_content()
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
@@ -201,8 +200,6 @@ if __name__ == "__main__":
     for filename, content in file_content.items():
         
         sql_statements = extract_sql_queries(content)
-
-    print(sql_statements)
     
     # Send SQL queries to API
     api_response = send_to_api(sql_statements, api_endpoint, platform)
@@ -214,4 +211,4 @@ if __name__ == "__main__":
         print(f"SQL Queries processing failed. API Response: {api_response}")
     
     post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
-    print(post_response)
+    #print(post_response)
