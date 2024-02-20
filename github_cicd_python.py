@@ -222,13 +222,16 @@ def update_comments(api_response, existing_comments):
 
     extracted_queries = []
     for comment in existing_comments:
-        # Extract the SQL query from the 'body' field
-        match = re.search(r'```sql\n(.*?)\n```', comment['body'], re.DOTALL)
-        if match:
-            sql_query = match.group(1)
-            extracted_queries.append(sql_query)
+        if "Status - Resolved" not in comment['body']:
+            # Extract the SQL query from the 'body' field
+            match = re.search(r'```sql\n(.*?)\n```', comment['body'], re.DOTALL)
+            if match:
+                sql_query = match.group(1)
+                extracted_queries.append(sql_query)
+                
     print('extracted_queries:',extracted_queries)
     print('extracted_queriesq',extracted_queriesq)
+    
     for query in extracted_queries:
         if query not in extracted_queriesq:
             # Comment is resolved, update the comment with "Status - Resolved"
