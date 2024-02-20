@@ -216,8 +216,20 @@ def get_pr_comments():
     return comments
 
 def update_comments(api_response, existing_comments):
-    for query, events in existing_comments.items():
-        if query not in api_response:
+    content_str = api_response.get('content', '{}')
+    api_response_content = json.loads(content_str)
+    extracted_queriesq = list(api_response_content.keys())
+
+    extracted_queries = []
+    for comment in existing_comments:
+        # Extract the SQL query from the 'body' field
+        match = re.search(r'```sql\n(.*?)\n```', comment['body'], re.DOTALL)
+        if match:
+            sql_query = match.group(1)
+            extracted_queries.append(sql_query)
+    
+    for query in extracted_queries:
+        if query not in extracted_queriesq:
             # Comment is resolved, update the comment with "Status - Resolved"
             update_comment_status(query, "Status - Resolved")
 
@@ -317,5 +329,5 @@ if __name__ == "__main__":
             print(f"SQL Queries successfully processed . API Response: {api_response}")
         else:
             print(f"SQL Queries processing failed. API Response: {api_response}")
-
+                
         update_comments(api_response, existing_comments)
