@@ -180,7 +180,7 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
         return {"status": 500, "error": f"Error posting comment: {e}"}
 
 if __name__ == "__main__":
-    description = get_pr_description()
+    pr_description = get_pr_description()
     print(description)
     platform =""
     if 'Platforms:' in pr_description:
