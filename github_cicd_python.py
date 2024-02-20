@@ -232,7 +232,7 @@ def update_comments(api_response, existing_comments):
     for query in extracted_queries:
         if query not in extracted_queriesq:
             # Comment is resolved, update the comment with "Status - Resolved"
-            update_comment_status(query, "Status - Resolved")
+            update_comment_status(query, "Resolved")
 
 def update_comment_status(query, status):
     headers = {
@@ -252,9 +252,17 @@ def update_comment_status(query, status):
             break
 
     if comment_id:
-        # Update the comment body with the new status
+        # Get the existing comment body
+        existing_comment_url = f"https://api.github.com/repos/{repo_name}/issues/comments/{comment_id}"
+        existing_comment_response = requests.get(existing_comment_url, headers=headers)
+        existing_comment_body = existing_comment_response.json().get('body', '')
+
+        # Add the status to the existing comment body
+        updated_comment_body = f"{existing_comment_body}\n\nStatus - {status}"
+
+        # Update the comment body with the new content
         update_url = f"https://api.github.com/repos/{repo_name}/issues/comments/{comment_id}"
-        update_payload = {"body": f"Status - {status}"}
+        update_payload = {"body": updated_comment_body}
         update_response = requests.patch(update_url, headers=headers, json=update_payload)
 
 if __name__ == "__main__":
