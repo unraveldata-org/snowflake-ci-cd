@@ -246,6 +246,7 @@ def update_comment_status(query, status):
 
 if __name__ == "__main__":
     existing_comments = get_pr_comments()
+    print(existing_comments)
     if not existing_comments:
         file_content=get_raw_file_content()
         file_names=get_raw_file_content(get_file_name_flag=True)
@@ -286,6 +287,7 @@ if __name__ == "__main__":
         file_content=get_raw_file_content()
         file_names=get_raw_file_content(get_file_name_flag=True)
         file=file_names[0]
+        print(file)
         platform="snowflake"
         if('snowflake' in file.lower() or 'sf' in file.lower()):
             platform="snowflake"
