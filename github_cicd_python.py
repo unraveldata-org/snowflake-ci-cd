@@ -204,11 +204,20 @@ def get_platform_details(pr_description):
 
 if __name__ == "__main__":
     pr_description = get_pr_description()
-    platform=get_platform_details(pr_description)
-    print('platform:',platform)
     file_content=get_raw_file_content()
     file_names=get_raw_file_content(get_file_name_flag=True)
-    print(file_names)
+    file=filenames[0]
+    platform="snowflake"
+    if('snowflake' in file.lower() or 'sf' in file.lower()):
+        platform="snowflake"
+    elif('bigquery' in file.lower() or 'bq' in file.lower()):
+        platform="bigquery"
+    elif('databricks' in file.lower() or 'dbx' in file.lower()):
+        platform="databricks"
+    else:
+        print('Platforms information not found in the description, proceeding with snowflake as default platform.')
+
+    print(platform)
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
     repo_owner = os.getenv("REPO_OWNER")
