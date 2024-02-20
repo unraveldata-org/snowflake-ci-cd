@@ -5,6 +5,7 @@ on:
     types:
       - opened
       - reopened
+      - synchronize
 
 jobs:
   run_ci_cd:
