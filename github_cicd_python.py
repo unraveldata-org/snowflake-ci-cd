@@ -298,9 +298,9 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
             # Check if the query is not in existing_queries
             if query not in extracted_queriesq:
 
-                if query_key and events:
+                if query and events:
                     # Create the comment body
-                    comment_body = format_comment(query_key, events)
+                    comment_body = format_comment(query, events)
                     print(f"Comment Body:\n{comment_body}")
     
                     # Add the comment to the pull request
