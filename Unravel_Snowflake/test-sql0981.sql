@@ -1,5 +1,5 @@
 /**
-create history query Taskqawqqq
+create history query Taskqawqqqq
 */
 
 CREATE OR REPLACE TASK replicate_history_querys
