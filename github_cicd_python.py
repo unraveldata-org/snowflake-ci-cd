@@ -229,14 +229,12 @@ def update_comments(api_response, existing_comments):
 
     extracted_queries = []
     for comment in existing_comments:
-        if "Status - Resolved" not in comment['body']:
+        if "⚙️Status - ✅Resolved" not in comment['body']:
             # Extract the SQL query from the 'body' field
             match = re.search(r'```sql\n(.*?)\n```', comment['body'], re.DOTALL)
             if match:
                 sql_query = match.group(1)
                 extracted_queries.append(sql_query)
-    print('extracted_queriesq:',extracted_queriesq)
-    print('extracted_queries',extracted_queries)
     for query in extracted_queries:
         if query not in extracted_queriesq:
             # Comment is resolved, update the comment with "Status - Resolved"
@@ -287,7 +285,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
         
         extracted_queriesq = []
         for comment in existing_comments:
-            if "Status - Resolved" not in comment['body']:
+            if "⚙️Status - ✅Resolved" not in comment['body']:
                 # Extract the SQL query from the 'body' field
                 match = re.search(r'```sql\n(.*?)\n```', comment['body'], re.DOTALL)
                 if match:
@@ -297,7 +295,8 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
         print('extracted_queriesq',extracted_queriesq)
         
         # Comment on the pull request for each extracted query
-        for query_data in extracted_queries:
+        for query_data_str in extracted_queries:
+            query_data = json.loads(query_data_str)
             query_key = query_data.get('query', '')
             print(query_key)
 
