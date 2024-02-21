@@ -283,6 +283,8 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
                 # Check if the query is not present in existing_comments
                 if "Status - Resolved" not in comment['body']:
                     extracted_queries.append(sql_query)
+
+        print(extracted_queries)
         
         # Comment on the pull request for each extracted query
         for query_key, query_data in api_response_dict.items():
@@ -290,7 +292,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
             match = re.search(r'```sql\n(.*?)\n```', query_key, re.DOTALL)
             if match:
                 sql_query = match.group(1)
-                
+                print(sql_query)
                 # Check if the query is not in existing_queries
                 if sql_query not in extracted_queries:
                     # Extract insights from the API response
