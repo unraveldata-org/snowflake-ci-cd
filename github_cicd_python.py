@@ -265,7 +265,7 @@ def update_comment_status(query, status):
         existing_comment_body = existing_comment_response.json().get('body', '')
 
         # Add the status to the existing comment body
-        updated_comment_body = f"{existing_comment_body}\n\nStatus - {status}"
+        updated_comment_body = f"{existing_comment_body}\n\n⚙️Status - {status}"
 
         # Update the comment body with the new content
         update_url = f"https://api.github.com/repos/{repo_name}/issues/comments/{comment_id}"
@@ -279,63 +279,46 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
     }
     try:
         # Parse the JSON content from the api_response string
-        api_response_dict = json.loads(api_response['content'])
-        print(api_response_dict)
+        api_response_list = json.loads(api_response.get('content', '[]'))
+        print(api_response_list)
+
+        extracted_queries = [item.get('query', '') for item in api_response_list]
+        print('extracted_queries', extracted_queries)
         
-        extracted_queries = []
+        extracted_queriesq = []
         for comment in existing_comments:
             if "Status - Resolved" not in comment['body']:
                 # Extract the SQL query from the 'body' field
                 match = re.search(r'```sql\n(.*?)\n```', comment['body'], re.DOTALL)
                 if match:
                     sql_query = match.group(1)
-                    extracted_queries.append(sql_query)
+                    extracted_queriesq.append(sql_query)
 
-        print('extracted_queries',extracted_queries)
+        print('extracted_queriesq',extracted_queriesq)
         
         # Comment on the pull request for each extracted query
-        for query_key, query_data in api_response_dict.items():
+        for query_data in extracted_queries:
+            query_key = query_data.get('query', '')
             print(query_key)
-            # Extract the SQL query from the query key
-            match = re.search(r'```sql\n(.*?)\n```', query_key, re.DOTALL)
-            
-            if query_key:
-                # Check if the query is not in existing_queries
-                if query_key not in extracted_queries:
-                    # Extract insights from the API response
-                    events = query_data.get("events", {})
-                    action = events.get("action", "")
-                    detail = events.get("detail", "")
-                    ext_info = events.get("ext_info", "")
-                    impact_score = events.get("impact_score", "")
-                    name = events.get("name", "")
-                    remarks = events.get("remarks", "")
-                    
-                    # Create the comment body
-                    comment_body = (
-                        f"📌**Query:**\n```sql\n{query_key}\n```\n\n<details>\n"
-                        f"<summary>📊Events</summary>\n\n| Event | Details |\n| --- | --- |\n"
-                        f"| **action** | {action} |\n"
-                        f"| **detail** | {detail} |\n"
-                        f"| **ext_info** | {ext_info} |\n"
-                        f"| **impact_score** | {impact_score} |\n"
-                        f"| **name** | {name} |\n"
-                        f"| **remarks** | {remarks} |\n"
-                        f"</details>"
-                    )
-                    
-                    # Add the comment to the pull request
-                    # You need to replace the placeholders with actual values
-                    # repo_name, pr_number, access_token
-                    comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
-                    comment_payload = {"body": comment_body}
-                    comment_response = requests.post(comments_url, headers=headers, json=comment_payload)
 
-                    # Check if the comment was successfully added
-                    if comment_response.status_code == 201:
-                        print(f"Comment added for query:\n{query_key}")
-                    else:
-                        print(f"Failed to add comment for query:\n{query_key}")
+            # Check if the query is not in existing_queries
+            if query_key not in extracted_queriesq:
+                insights = query_data.get('insights', [])
+
+                # Create the comment body
+                comment_body = format_comment(query_key, insights)
+                print(f"Comment Body:\n{comment_body}")
+
+                # Add the comment to the pull request
+                comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
+                comment_payload = {"body": comment_body}
+                comment_response = requests.post(comments_url, headers=headers, json=comment_payload)
+
+                # Check if the comment was successfully added
+                if comment_response.status_code == 201:
+                    print(f"Comment added for query:\n{query_key}")
+                else:
+                    print(f"Failed to add comment for query:\n{query_key}")
     
     except json.JSONDecodeError:
         print("Error decoding JSON from api_response content.")
@@ -421,4 +404,4 @@ if __name__ == "__main__":
             print(f"SQL Queries processing failed. API Response: {api_response}")
                 
         update_comments(api_response, existing_comments)
-        #post_comment_on_pr_query_wise(api_response, existing_comments)
+        post_comment_on_pr_query_wise(api_response, existing_comments)
