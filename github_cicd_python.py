@@ -305,20 +305,21 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
             if query_key not in extracted_queriesq:
                 insights = query_data.get('insights', [])
 
-                # Create the comment body
-                comment_body = format_comment(query_key, insights)
-                print(f"Comment Body:\n{comment_body}")
+                if query_key and insights:
+                    # Create the comment body
+                    comment_body = format_comment(query_key, insights)
+                    print(f"Comment Body:\n{comment_body}")
+    
+                    # Add the comment to the pull request
+                    comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
+                    comment_payload = {"body": comment_body}
+                    comment_response = requests.post(comments_url, headers=headers, json=comment_payload)
 
-                # Add the comment to the pull request
-                comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
-                comment_payload = {"body": comment_body}
-                comment_response = requests.post(comments_url, headers=headers, json=comment_payload)
-
-                # Check if the comment was successfully added
-                if comment_response.status_code == 201:
-                    print(f"Comment added for query:\n{query_key}")
-                else:
-                    print(f"Failed to add comment for query:\n{query_key}")
+                    # Check if the comment was successfully added
+                    if comment_response.status_code == 201:
+                        print(f"Comment added for query:\n{query_key}")
+                    else:
+                        print(f"Failed to add comment for query:\n{query_key}")
     
     except json.JSONDecodeError:
         print("Error decoding JSON from api_response content.")
