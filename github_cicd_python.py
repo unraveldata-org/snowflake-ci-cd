@@ -283,6 +283,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
         
         # Comment on the pull request for each extracted query
         for query_key, query_data in api_response_dict.items():
+            print(query_key)
             # Extract the SQL query from the query key
             match = re.search(r'```sql\n(.*?)\n```', query_key, re.DOTALL)
             if match:
