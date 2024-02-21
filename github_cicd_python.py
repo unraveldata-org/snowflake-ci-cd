@@ -277,11 +277,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
     }
     try:
         # Parse the JSON content from the api_response string
-        api_response_list = json.loads(api_response.get('content', '[]'))
-        print(api_response_list)
-
-        extracted_queries = [item.get('query', '') for item in api_response_list]
-        print('extracted_queries', extracted_queries)
+        content_data = json.loads(api_response.get('content', {}))
         
         extracted_queriesq = []
         for comment in existing_comments:
@@ -295,19 +291,16 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
         print('extracted_queriesq',extracted_queriesq)
         
         # Comment on the pull request for each extracted query
-        for query_data_str in extracted_queries:
-            print(query_data_str)
-            query_data = json.loads(query_data_str)
-            query_key = query_data.get('query', '')
-            print(query_key)
+        for entry in content_data:
+            query = entry.get('query', '')
+            events = entry.get('insights', [])
 
             # Check if the query is not in existing_queries
-            if query_key not in extracted_queriesq:
-                insights = query_data.get('insights', [])
+            if query not in extracted_queriesq:
 
-                if query_key and insights:
+                if query_key and events:
                     # Create the comment body
-                    comment_body = format_comment(query_key, insights)
+                    comment_body = format_comment(query_key, events)
                     print(f"Comment Body:\n{comment_body}")
     
                     # Add the comment to the pull request
