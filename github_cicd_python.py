@@ -228,9 +228,6 @@ def update_comments(api_response, existing_comments):
             if match:
                 sql_query = match.group(1)
                 extracted_queries.append(sql_query)
-                
-    print('extracted_queries:',extracted_queries)
-    print('extracted_queriesq',extracted_queriesq)
     
     for query in extracted_queries:
         if query not in extracted_queriesq:
@@ -247,7 +244,6 @@ def update_comment_status(query, status):
     comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
     comments_response = requests.get(comments_url, headers=headers)
     comments = comments_response.json()
-    print('comments',comments)
     comment_id = None
     for comment in comments:
         if query in comment['body']:
@@ -275,16 +271,14 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
         
         extracted_queries = []
         for comment in existing_comments:
-            # Extract the SQL query from the 'body' field
-            match = re.search(r'```sql\n(.*?)\n```', comment['body'], re.DOTALL)
-            if match:
-                sql_query = match.group(1)
-                
-                # Check if the query is not present in existing_comments
-                if "Status - Resolved" not in comment['body']:
+            if "Status - Resolved" not in comment['body']:
+                # Extract the SQL query from the 'body' field
+                match = re.search(r'```sql\n(.*?)\n```', comment['body'], re.DOTALL)
+                if match:
+                    sql_query = match.group(1)
                     extracted_queries.append(sql_query)
 
-        print(extracted_queries)
+        print('extracted_queries',extracted_queries)
         
         # Comment on the pull request for each extracted query
         for query_key, query_data in api_response_dict.items():
@@ -337,7 +331,6 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
 
 if __name__ == "__main__":
     existing_comments = get_pr_comments()
-    print(existing_comments)
     if not existing_comments:
         file_content=get_raw_file_content()
         file_names=get_raw_file_content(get_file_name_flag=True)
