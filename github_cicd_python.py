@@ -288,8 +288,6 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
             match = re.search(r'```sql\n(.*?)\n```', query_key, re.DOTALL)
             
             if query_key:
-                sql_query = match.group(1)
-                print(sql_query)
                 # Check if the query is not in existing_queries
                 if query_key not in extracted_queries:
                     # Extract insights from the API response
