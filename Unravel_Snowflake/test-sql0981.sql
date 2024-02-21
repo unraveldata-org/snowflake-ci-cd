@@ -2,7 +2,7 @@
 create history query Task
 */
 
-CREATE OR REPLACE TASK replicate_history_query
+CREATE OR REPLACE TASK replicate_history_querys
  WAREHOUSE = UNRAVELDATA
  SCHEDULE = '60 MINUTE'
 AS
