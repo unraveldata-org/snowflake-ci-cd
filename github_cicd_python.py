@@ -365,6 +365,7 @@ if __name__ == "__main__":
         
         # Send SQL queries to API
         api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
+        print(api_response)
     
         # Post comment on PR
         if api_response.get("status") == 200:
