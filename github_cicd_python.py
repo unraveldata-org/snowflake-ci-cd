@@ -265,6 +265,10 @@ def update_comment_status(query, status):
         update_response = requests.patch(update_url, headers=headers, json=update_payload)
 
 def post_comment_on_pr_query_wise(api_response, existing_comments):
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
     try:
         # Parse the JSON content from the api_response string
         api_response_dict = json.loads(api_response['content'])
