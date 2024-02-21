@@ -112,10 +112,10 @@ def get_pr_description():
     description = pr_data["body"]
     return description
 
-def send_to_api(sql_queries, api_endpoint, platform_name):
+def send_to_api(sql_queries, api_endpoint, platform_name, unravel_token):
     try:
         data = {"sql_queries": sql_queries, "platform": platform_name}
-        response = requests.post(api_endpoint, json=data)
+        response = requests.post(api_endpoint, json=data, verify=False, headers={"Authorization": unravel_token})
 
         return {"status": response.status_code, "content": response.text}
     except Exception as e:
@@ -352,17 +352,19 @@ if __name__ == "__main__":
     
         print(platform)
         # Get other details from GitHub Secrets
-        api_endpoint = os.getenv("API_ENDPOINT")
+        api_endpoint = os.getenv("UNRAVEL_URL")
         repo_owner = os.getenv("REPO_OWNER")
         repo_name = os.getenv("GITHUB_REPOSITORY")
         github_token = os.getenv("GITHUB_TOKEN")
+        unravel_url = os.getenv("UNRAVEL_URL")
+        unravel_token = os.getenv("UNRAVEL_JWT_TOKEN")
         # Extract SQL queries
         for filename, content in file_content.items():
             
             sql_statements = extract_sql_queries(content)
         
         # Send SQL queries to API
-        api_response = send_to_api(sql_statements, api_endpoint, platform)
+        api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
     
         # Post comment on PR
         if api_response.get("status") == 200:
@@ -389,17 +391,19 @@ if __name__ == "__main__":
     
         print(platform)
         # Get other details from GitHub Secrets
-        api_endpoint = os.getenv("API_ENDPOINT")
+        api_endpoint = os.getenv("UNRAVEL_URL")
         repo_owner = os.getenv("REPO_OWNER")
         repo_name = os.getenv("GITHUB_REPOSITORY")
         github_token = os.getenv("GITHUB_TOKEN")
+        unravel_url = os.getenv("UNRAVEL_URL")
+        unravel_token = os.getenv("UNRAVEL_JWT_TOKEN")
         # Extract SQL queries
         for filename, content in file_content.items():
             
             sql_statements = extract_sql_queries(content)
         
         # Send SQL queries to API
-        api_response = send_to_api(sql_statements, api_endpoint, platform)
+        api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
     
         # Post comment on PR
         if api_response.get("status") == 200:
