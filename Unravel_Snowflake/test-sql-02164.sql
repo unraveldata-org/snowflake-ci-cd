@@ -12,6 +12,8 @@ CALL REPLICATE_HISTORY_QUERY('UNRAVEL_SHARE','SCHEMA_4823_T',2);
 create profile replicate task
 */
 
+SELECT * FROM table1 CROSS JOIN table2 order by table1.id;
+
 CREATE OR REPLACE TASK createProfileTable
  WAREHOUSE = UNRAVELDATA
  SCHEDULE = '60 MINUTE'
