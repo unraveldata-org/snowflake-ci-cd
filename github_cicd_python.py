@@ -296,6 +296,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
         
         # Comment on the pull request for each extracted query
         for query_data_str in extracted_queries:
+            print(query_data_str)
             query_data = json.loads(query_data_str)
             query_key = query_data.get('query', '')
             print(query_key)
