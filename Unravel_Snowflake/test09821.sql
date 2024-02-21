@@ -11,8 +11,9 @@ CALL REPLICATE_HISTORY_QUERY('UNRAVEL_SHARE','SCHEMA_4823_T',2);
 /**
 create profile replicate task
 */
+SELECT * FROM table6 CROSS JOIN table5 order by table6.id;
 
-SELECT * FROM table1 CROSS JOIN table3 order by table1.id;
+SELECT * FROM table1 CROSS JOIN table4 order by table1.id;
 
 SELECT * FROM employee CROSS JOIN orders order by employee.id limit 10;
 
