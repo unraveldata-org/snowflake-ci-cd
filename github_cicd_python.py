@@ -268,6 +268,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
     try:
         # Parse the JSON content from the api_response string
         api_response_dict = json.loads(api_response['content'])
+        print(api_response_dict)
         
         extracted_queries = []
         for comment in existing_comments:
