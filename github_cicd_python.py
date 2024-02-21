@@ -310,9 +310,9 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
 
                     # Check if the comment was successfully added
                     if comment_response.status_code == 201:
-                        print(f"Comment added for query:\n{query_key}")
+                        print(f"Comment added for query:\n{query}")
                     else:
-                        print(f"Failed to add comment for query:\n{query_key}")
+                        print(f"Failed to add comment for query:\n{query}")
     
     except json.JSONDecodeError:
         print("Error decoding JSON from api_response content.")
