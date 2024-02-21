@@ -140,19 +140,23 @@ def send_to_api_with_curl(sql_queries, api_endpoint):
     except Exception as e:
         print(f"Error sending to API: {e}")
         return None
-
-def format_comment(query, events):
+        
+def format_comment(query, insights):
     logo_url = 'https://www.unraveldata.com/wp-content/themes/unravel-child/src/images/unLogo.svg'
     
-    comment = f"![Logo]({logo_url})\n\n📌**Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊Events</summary>\n\n"
+    comment = f"![Logo]({logo_url})\n\n📌**Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊Insights</summary>\n\n"
     
     # Create a table header
-    comment += "| Event | Details |\n"
-    comment += "| --- | --- |\n"
+    comment += "| # | Name | Action | Detail |\n"
+    comment += "| --- | --- | --- | --- |\n"
     
-    # Add events to the table
-    for key, value in events.items():
-        comment += f'| **{key}** | {value} |\n'
+    # Add insights to the table
+    for idx, insight in enumerate(insights, start=1):
+        name = insight.get('name', '')
+        action = insight.get('action', '')
+        detail = insight.get('detail', '')
+        
+        comment += f"| {idx} | {name} | {action} | {detail} |\n"
     
     comment += "</details>"
     return comment
@@ -169,11 +173,14 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
         content_data = json.loads(api_response.get('content', {}))
         #print(content_data)
         
-        for query, events in content_data.items():
-            comment = format_comment(query, events['events'])
-            payload = {"body": "{}".format(comment)}
-            response = requests.post(url, headers=headers, json=payload)
-        
+        for entry in content_data:
+            query = entry.get('query', '')
+            events = entry.get('insights', [])
+            
+            if query and events:
+                comment = format_comment(query, events)
+                payload = {"body": "{}".format(comment)}
+                response = requests.post(url, headers=headers, json=payload)
 
         return {"status": response.status_code, "content": response.text}
     except Exception as e:
