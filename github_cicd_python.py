@@ -114,7 +114,7 @@ def get_pr_description():
 
 def send_to_api(sql_queries, api_endpoint, platform_name, unravel_token):
     try:
-        data = {"sql_queries": sql_queries, "platform": platform_name}
+        data = {"queries": sql_queries, "platform": platform_name}
         response = requests.post(api_endpoint, json=data, verify=False, headers={"Authorization": unravel_token})
 
         return {"status": response.status_code, "content": response.text}
