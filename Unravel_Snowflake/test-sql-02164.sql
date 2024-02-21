@@ -1,5 +1,5 @@
 /**
-create history query Task
+create history query Taska
 */
 
 CREATE OR REPLACE TASK replicate_history_query
