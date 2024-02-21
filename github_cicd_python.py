@@ -286,11 +286,12 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
             print(query_key)
             # Extract the SQL query from the query key
             match = re.search(r'```sql\n(.*?)\n```', query_key, re.DOTALL)
-            if match:
+            
+            if query_key:
                 sql_query = match.group(1)
                 print(sql_query)
                 # Check if the query is not in existing_queries
-                if sql_query not in extracted_queries:
+                if query_key not in extracted_queries:
                     # Extract insights from the API response
                     events = query_data.get("events", {})
                     action = events.get("action", "")
@@ -302,7 +303,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
                     
                     # Create the comment body
                     comment_body = (
-                        f"📌**Query:**\n```sql\n{sql_query}\n```\n\n<details>\n"
+                        f"📌**Query:**\n```sql\n{query_key}\n```\n\n<details>\n"
                         f"<summary>📊Events</summary>\n\n| Event | Details |\n| --- | --- |\n"
                         f"| **action** | {action} |\n"
                         f"| **detail** | {detail} |\n"
@@ -322,9 +323,9 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
 
                     # Check if the comment was successfully added
                     if comment_response.status_code == 201:
-                        print(f"Comment added for query:\n{sql_query}")
+                        print(f"Comment added for query:\n{query_key}")
                     else:
-                        print(f"Failed to add comment for query:\n{sql_query}")
+                        print(f"Failed to add comment for query:\n{query_key}")
     
     except json.JSONDecodeError:
         print("Error decoding JSON from api_response content.")
