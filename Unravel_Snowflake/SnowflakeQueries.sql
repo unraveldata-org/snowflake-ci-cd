@@ -13,7 +13,7 @@ create profile replicate task
 */
 
 
-SELECT * FROM table1 CROSS JOIN table4 order by table1.id;
+SELECT * FROM table1 INNER JOIN table4 order by table1.id limit 10;
 
 SELECT * FROM employee CROSS JOIN orders order by employee.id limit 10;
 
