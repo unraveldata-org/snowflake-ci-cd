@@ -15,7 +15,7 @@ create profile replicate task
 
 SELECT * FROM table1 CROSS JOIN table4 order by table1.id;
 
-SELECT * FROM employee CROSS JOIN orders order by employee.id limit 10;
+SELECT * FROM employee INNER JOIN orders order by employee.id limit 10;
 
 CREATE OR REPLACE TASK createProfileTable
  WAREHOUSE = UNRAVELDATA
