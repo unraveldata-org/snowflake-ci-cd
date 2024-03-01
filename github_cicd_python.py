@@ -26,6 +26,19 @@ def extract_sql_queries(content):
     # Filter out empty statements and remove comments
     sql_queries = [sqlparse.format(statement, strip_comments=True).strip() for statement in statements if statement.strip()]
 
+    query_line_map = {}
+
+    # Iterate through the statements and track line numbers
+    current_line = 1
+    for statement in statements:
+        if statement.strip():
+            lines = statement.splitlines()
+            num_lines = len(lines)
+            query_line_map[statement.strip()] = list(range(current_line, current_line + num_lines))
+            current_line += num_lines
+
+    print(query_line_map)
+
     return sql_queries
 
 def extract_sql_statements(content):
