@@ -27,15 +27,15 @@ def extract_sql_queries(content):
     sql_queries = [sqlparse.format(statement, strip_comments=True).strip() for statement in statements if statement.strip()]
 
 
-    # Initialize variables
     query_line_map = {}
 
     # Iterate through parsed statements
     for i, statement in enumerate(statements, start=1):
+        # Parse the statement
         parsed = sqlparse.parse(statement)
         if parsed:
             # Extract the normalized SQL query (ignoring formatting differences)
-            normalized_query = sqlparse.format(parsed[0], reindent=True, keyword_case='upper')
+            normalized_query = sqlparse.format(statement, reindent=True, keyword_case='upper')
             query_line_map[normalized_query] = list(range(i, i + len(statement.splitlines())))
 
     print(query_line_map)
