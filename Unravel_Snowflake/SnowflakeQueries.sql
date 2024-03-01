@@ -17,7 +17,7 @@ SELECT * FROM table1 INNER JOIN table4 order by table1.id ;
 
 SELECT * FROM employee INNER JOIN orders order by employee.id;
 
-INSERT INTO Employee("Suryansh","65","90");
+INSERT INTO Employee("Suryansh","65","901");
 
 
 INSERT INTO employee_details VALUES
