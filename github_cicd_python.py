@@ -26,6 +26,19 @@ def extract_sql_queries(content):
     # Filter out empty statements and remove comments
     sql_queries = [sqlparse.format(statement, strip_comments=True).strip() for statement in statements if statement.strip()]
 
+    query_line_map = {}
+
+    # Iterate through the statements and track line numbers
+    current_line = 1
+    for statement in statements:
+        if statement.strip():
+            lines = statement.splitlines()
+            num_lines = len(lines)
+            query_line_map[statement.strip()] = list(range(current_line, current_line + num_lines))
+            current_line += num_lines
+
+    print(query_line_map)
+
     return sql_queries
 
 def extract_sql_statements(content):
@@ -348,18 +361,18 @@ if __name__ == "__main__":
             
             sql_statements = extract_sql_queries(content)
         
-        # Send SQL queries to API
-        api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
-        print(api_response)
+        # # Send SQL queries to API
+        # api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
+        # print(api_response)
     
-        # Post comment on PR
-        if api_response.get("status") == 200:
-            print(f"SQL Queries successfully processed . API Response: {api_response}")
-        else:
-            print(f"SQL Queries processing failed. API Response: {api_response}")
+        # # Post comment on PR
+        # if api_response.get("status") == 200:
+        #     print(f"SQL Queries successfully processed . API Response: {api_response}")
+        # else:
+        #     print(f"SQL Queries processing failed. API Response: {api_response}")
         
-        post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
-        #print(post_response)
+        # post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
+        # #print(post_response)
     else:
         file_content=get_raw_file_content()
         file_names=get_raw_file_content(get_file_name_flag=True)
@@ -388,14 +401,14 @@ if __name__ == "__main__":
             
             sql_statements = extract_sql_queries(content)
         
-        # Send SQL queries to API
-        api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
+        # # Send SQL queries to API
+        # api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
     
-        # Post comment on PR
-        if api_response.get("status") == 200:
-            print(f"SQL Queries successfully processed . API Response: {api_response}")
-        else:
-            print(f"SQL Queries processing failed. API Response: {api_response}")
+        # # Post comment on PR
+        # if api_response.get("status") == 200:
+        #     print(f"SQL Queries successfully processed . API Response: {api_response}")
+        # else:
+        #     print(f"SQL Queries processing failed. API Response: {api_response}")
                 
-        update_comments(api_response, existing_comments)
-        post_comment_on_pr_query_wise(api_response, existing_comments)
+        # update_comments(api_response, existing_comments)
+        # post_comment_on_pr_query_wise(api_response, existing_comments)
