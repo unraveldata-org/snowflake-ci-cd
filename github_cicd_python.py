@@ -28,16 +28,23 @@ def extract_sql_queries(content):
 
 
     query_line_map = {}
+    end_line_queries=[]
+    for statement in statements:
+        if not statement.strip():
+            continue
+        
+        matches = re.finditer(re.escape(statement), file_content)
+        
 
-    # Iterate through parsed statements
-    for i, statement in enumerate(statements, start=1):
-        # Parse the statement
-        parsed = sqlparse.parse(statement)
-        if parsed:
-            # Extract the normalized SQL query (ignoring formatting differences)
-            normalized_query = sqlparse.format(statement, reindent=True, keyword_case='upper', strip_comments=True)
-            query_line_map[normalized_query] = list(range(i, i + len(statement.splitlines())))
+        for match in matches:
+           
+            start_line = file_content.count('\n', 0, match.start()) + 1
+            end_line = start_line + statement.count('\n')
 
+            if end_line not in end_line_queries:
+                end_line_queries.append(end_line)
+                
+                query_line_map[sqlparse.format(statement, strip_comments=True)]=end_line
     print(query_line_map)
 
     return sql_queries
