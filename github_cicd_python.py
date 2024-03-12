@@ -33,7 +33,7 @@ def extract_sql_queries(content):
         if not statement.strip():
             continue
         
-        matches = re.finditer(re.escape(statement), file_content)
+        matches = re.finditer(re.escape(statement), content)
         
 
         for match in matches:
