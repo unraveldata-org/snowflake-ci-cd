@@ -38,7 +38,7 @@ def extract_sql_queries(content):
 
         for match in matches:
            
-            start_line = file_content.count('\n', 0, match.start()) + 1
+            start_line = content.count('\n', 0, match.start()) + 1
             end_line = start_line + statement.count('\n')
 
             if end_line not in end_line_queries:
