@@ -33,18 +33,22 @@ def extract_sql_queries(content):
         if not statement.strip():
             continue
         
-        matches = re.finditer(re.escape(statement), content)
+        matches = re.finditer(re.escape(statement), file_content)
         
 
         for match in matches:
-           
-            start_line = content.count('\n', 0, match.start()) + 1
+            
+            start_line = file_content.count('\n', 0, match.start()) + 1
             end_line = start_line + statement.count('\n')
 
             if end_line not in end_line_queries:
                 end_line_queries.append(end_line)
-                
-                query_line_map[sqlparse.format(statement, strip_comments=True)]=end_line
+                query_line_count=sqlparse.format(statement, strip_comments=True).count('\n')+1
+                if sqlparse.format(statement, strip_comments=True) in query_line_map:
+                    query_line_map[sqlparse.format(statement, strip_comments=True)].append((end_line, query_line_count))
+                else:
+                    query_line_map[sqlparse.format(statement, strip_comments=True)]=[(end_line, query_line_count)]
+                    
     print(query_line_map)
 
     return sql_queries
