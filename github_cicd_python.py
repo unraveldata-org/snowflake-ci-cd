@@ -49,9 +49,8 @@ def extract_sql_queries(content):
                 else:
                     query_line_map[sqlparse.format(statement, strip_comments=True)]=[(end_line, query_line_count)]
                     
-    print(query_line_map)
 
-    return sql_queries
+    return sql_queries, query_line_map
 
 def extract_sql_statements(content):
     sql_queries = []
@@ -166,7 +165,7 @@ def send_to_api_with_curl(sql_queries, api_endpoint):
         print(f"Error sending to API: {e}")
         return None
         
-def format_comment(query, insights):
+def format_comment(query, insights, query_line_map):
     logo_url = 'https://www.unraveldata.com/wp-content/themes/unravel-child/src/images/unLogo.svg'
     
     comment = f"![Logo]({logo_url})\n\n📌**Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊Insights</summary>\n\n"
@@ -181,12 +180,19 @@ def format_comment(query, insights):
         action = insight.get('action', '')
         detail = insight.get('detail', '')
         
+        if 'at line' in detail:
+            detail_parts = detail.split('at line')
+            if len(detail_parts) == 2:
+                endline, count = query_line_map.get(query, [(0, 0)])[0]  # Default to [(0, 0)] if query not found in map
+                line_no = int(detail_parts[1].strip()) - (endline - count)
+                detail = f"{detail_parts[0]}at line {line_no}"
+
         comment += f"| {idx} | {name} | {action} | {detail} |\n"
     
     comment += "</details>"
     return comment
 
-def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name):
+def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map):
     try:
         url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
 
@@ -203,7 +209,7 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
             events = entry.get('insights', [])
             
             if query and events:
-                comment = format_comment(query, events)
+                comment = format_comment(query, events, query_line_map)
                 payload = {"body": "{}".format(comment)}
                 response = requests.post(url, headers=headers, json=payload)
 
@@ -371,7 +377,9 @@ if __name__ == "__main__":
         # Extract SQL queries
         for filename, content in file_content.items():
             
-            sql_statements = extract_sql_queries(content)
+            sql_statements, query_line_map = extract_sql_queries(content)
+        print("sql_statements":sql_statements)
+        print("query_line_map":query_line_map)
         
         # # Send SQL queries to API
         # api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
