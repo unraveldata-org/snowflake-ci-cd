@@ -381,18 +381,18 @@ if __name__ == "__main__":
         print("sql_statements",sql_statements)
         print("query_line_map",query_line_map)
         
-        # # Send SQL queries to API
-        # api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
-        # print(api_response)
+        # Send SQL queries to API
+        api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
+        print(api_response)
     
-        # # Post comment on PR
-        # if api_response.get("status") == 200:
-        #     print(f"SQL Queries successfully processed . API Response: {api_response}")
-        # else:
-        #     print(f"SQL Queries processing failed. API Response: {api_response}")
+        # Post comment on PR
+        if api_response.get("status") == 200:
+            print(f"SQL Queries successfully processed . API Response: {api_response}")
+        else:
+            print(f"SQL Queries processing failed. API Response: {api_response}")
         
-        # post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
-        # #print(post_response)
+        post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map)
+        #print(post_response)
     else:
         file_content=get_raw_file_content()
         file_names=get_raw_file_content(get_file_name_flag=True)
