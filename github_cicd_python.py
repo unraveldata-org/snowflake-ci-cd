@@ -378,8 +378,8 @@ if __name__ == "__main__":
         for filename, content in file_content.items():
             
             sql_statements, query_line_map = extract_sql_queries(content)
-        print("sql_statements":sql_statements)
-        print("query_line_map":query_line_map)
+        print("sql_statements",sql_statements)
+        print("query_line_map",query_line_map)
         
         # # Send SQL queries to API
         # api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
