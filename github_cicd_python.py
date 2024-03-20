@@ -184,7 +184,7 @@ def format_comment(query, insights, query_line_map):
             detail_parts = detail.split('at line')
             if len(detail_parts) == 2:
                 endline, count = query_line_map.get(query, [(0, 0)])[0]  # Default to [(0, 0)] if query not found in map
-                line_no = int(detail_parts[1].strip()) - (endline - count)
+                line_no = endline - (count - int(detail_parts[1].strip()))
                 detail = f"{detail_parts[0]}at line {line_no}"
 
         comment += f"| {idx} | {name} | {action} | {detail} |\n"
@@ -301,7 +301,7 @@ def update_comment_status(query, status):
         update_payload = {"body": updated_comment_body}
         update_response = requests.patch(update_url, headers=headers, json=update_payload)
 
-def post_comment_on_pr_query_wise(api_response, existing_comments):
+def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map):
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Accept": "application/vnd.github.v3+json",
@@ -331,7 +331,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments):
 
                 if query and events:
                     # Create the comment body
-                    comment_body = format_comment(query, events)
+                    comment_body = format_comment(query, events, query_line_map)
                     print(f"Comment Body:\n{comment_body}")
     
                     # Add the comment to the pull request
@@ -419,16 +419,16 @@ if __name__ == "__main__":
         # Extract SQL queries
         for filename, content in file_content.items():
             
-            sql_statements = extract_sql_queries(content)
+            sql_statements, query_line_map = extract_sql_queries(content)
         
-        # # Send SQL queries to API
-        # api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
+        # Send SQL queries to API
+        api_response = send_to_api(sql_statements, api_endpoint, platform, unravel_token)
     
-        # # Post comment on PR
-        # if api_response.get("status") == 200:
-        #     print(f"SQL Queries successfully processed . API Response: {api_response}")
-        # else:
-        #     print(f"SQL Queries processing failed. API Response: {api_response}")
+        # Post comment on PR
+        if api_response.get("status") == 200:
+            print(f"SQL Queries successfully processed . API Response: {api_response}")
+        else:
+            print(f"SQL Queries processing failed. API Response: {api_response}")
                 
-        # update_comments(api_response, existing_comments)
-        # post_comment_on_pr_query_wise(api_response, existing_comments)
+        update_comments(api_response, existing_comments)
+        post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map)
