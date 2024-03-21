@@ -165,14 +165,58 @@ def send_to_api_with_curl(sql_queries, api_endpoint):
         print(f"Error sending to API: {e}")
         return None
         
-def format_comment(query, insights, query_line_map):
+def get_html_content(url):
+    try:
+        # Send a GET request to the URL
+        response = requests.get(url)
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            # Return the HTML content of the page
+            return response.text
+        else:
+            print(f"Failed to fetch HTML content from {url}. Status code: {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"An error occurred while fetching HTML content from {url}: {e}")
+        return None
+
+def get_data_anchor(html_content, line_number):
+    try:
+        # Parse the HTML content using BeautifulSoup
+        soup = BeautifulSoup(html_content, 'html.parser')
+        # Find the <td> element with the corresponding data-line-number attribute
+        line_td = soup.find('td', {'data-line-number': str(line_number)})
+        if line_td:
+            # Extract the data-anchor value from the id attribute
+            data_anchor = line_td.get('id')
+            return data_anchor
+        return None
+    except Exception as e:
+        print(f"An error occurred while extracting data-anchor value: {e}")
+        return None
+
+def generate_url_for_line_change(url, data_anchor):
+    try:
+        # Check if the URL already contains a fragment identifier
+        if '#' in url:
+            return f"{url}&#{data_anchor}"
+        else:
+            return f"{url}#{data_anchor}"
+    except Exception as e:
+        print(f"An error occurred while generating URL: {e}")
+        return None
+
+def format_comment(query, insights, query_line_map, url):
     logo_url = 'https://www.unraveldata.com/wp-content/themes/unravel-child/src/images/unLogo.svg'
     
     comment = f"![Logo]({logo_url})\n\n📌**Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊Insights</summary>\n\n"
     
     # Create a table header
-    comment += "| # | Name | Action | Detail |\n"
-    comment += "| --- | --- | --- | --- |\n"
+    comment += "| # | Name | Action | Detail | Let's Navigate |\n"
+    comment += "| --- | --- | --- | --- | --- |\n"
+    
+    # Get HTML content of the page
+    html_content = get_html_content(url)
     
     # Add insights to the table
     for idx, insight in enumerate(insights, start=1):
@@ -180,19 +224,33 @@ def format_comment(query, insights, query_line_map):
         action = insight.get('action', '')
         detail = insight.get('detail', '')
         
+        navigate_button = ""  # Default value for the navigation column
+        
         if 'at line' in detail:
             detail_parts = detail.split('at line')
             if len(detail_parts) == 2:
                 endline, count = query_line_map.get(query, [(0, 0)])[0]  # Default to [(0, 0)] if query not found in map
                 line_no = endline - (count - int(detail_parts[1].strip()))
                 detail = f"{detail_parts[0]}at line {line_no}"
-
-        comment += f"| {idx} | {name} | {action} | {detail} |\n"
+                
+                # Generate URL for navigating to the specific line
+                data_anchor = get_data_anchor(html_content, line_no)
+                if data_anchor:
+                    url_with_anchor = generate_url_for_line_change(url, data_anchor)
+                    navigate_button = f"<button onclick=\"window.location.href='{url_with_anchor}'\">Go to line {line_no}</button>"
+                else:
+                    navigate_button = f"(Line {line_no})"
+        
+        # Add a dash if the 'at line' condition is false
+        if not navigate_button:
+            navigate_button = "-"
+                
+        comment += f"| {idx} | {name} | {action} | {detail} | {navigate_button} |\n"
     
     comment += "</details>"
     return comment
 
-def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map):
+def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map, url):
     try:
         url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
 
@@ -209,7 +267,7 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
             events = entry.get('insights', [])
             
             if query and events:
-                comment = format_comment(query, events, query_line_map)
+                comment = format_comment(query, events, query_line_map, url)
                 payload = {"body": "{}".format(comment)}
                 response = requests.post(url, headers=headers, json=payload)
 
@@ -301,7 +359,7 @@ def update_comment_status(query, status):
         update_payload = {"body": updated_comment_body}
         update_response = requests.patch(update_url, headers=headers, json=update_payload)
 
-def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map):
+def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map, url):
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Accept": "application/vnd.github.v3+json",
@@ -331,7 +389,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_ma
 
                 if query and events:
                     # Create the comment body
-                    comment_body = format_comment(query, events, query_line_map)
+                    comment_body = format_comment(query, events, query_line_map, url)
                     print(f"Comment Body:\n{comment_body}")
     
                     # Add the comment to the pull request
@@ -375,6 +433,8 @@ if __name__ == "__main__":
         unravel_url = os.getenv("UNRAVEL_URL")
         unravel_token = os.getenv("UNRAVEL_JWT_TOKEN")
         # Extract SQL queries
+        url = f'https://api.github.com/repos/{repo_name}/pulls/{pr_number}/files'
+        
         for filename, content in file_content.items():
             
             sql_statements, query_line_map = extract_sql_queries(content)
@@ -391,7 +451,7 @@ if __name__ == "__main__":
         else:
             print(f"SQL Queries processing failed. API Response: {api_response}")
         
-        post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map)
+        post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map, url)
         #print(post_response)
     else:
         file_content=get_raw_file_content()
@@ -416,6 +476,8 @@ if __name__ == "__main__":
         github_token = os.getenv("GITHUB_TOKEN")
         unravel_url = os.getenv("UNRAVEL_URL")
         unravel_token = os.getenv("UNRAVEL_JWT_TOKEN")
+
+        url = f'https://api.github.com/repos/{repo_name}/pulls/{pr_number}/files'
         # Extract SQL queries
         for filename, content in file_content.items():
             
@@ -431,4 +493,4 @@ if __name__ == "__main__":
             print(f"SQL Queries processing failed. API Response: {api_response}")
                 
         update_comments(api_response, existing_comments)
-        post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map)
+        post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map, url)
