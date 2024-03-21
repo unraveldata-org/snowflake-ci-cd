@@ -41,6 +41,8 @@ SELECT * FROM employee7 CROSS JOIN orders9 order by employee7.id;
 
 SELECT * FROM employee65 CROSS JOIN orders23 order by employee65.id;
 
+SELECT * FROM employee69 CROSS JOIN orders27 order by employee69.id;
+
 /**
 create Task for replicating information schema query history sync with warehouse
 */
