@@ -240,7 +240,7 @@ def format_comment(query, insights, query_line_map, url):
                 if data_anchor:
                     url_with_anchor = generate_url_for_line_change(url, data_anchor)
                     print("url_with_anchor",url_with_anchor)
-                    navigate_button = f" ([Navigate to line {line_no}]({url_with_anchor}))"
+                    navigate_button = f'<a href="{url_with_anchor}" style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Click here</a>'
                 else:
                     navigate_button = f"(Line {line_no})"
         
