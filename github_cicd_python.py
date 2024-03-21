@@ -256,7 +256,7 @@ def format_comment(query, insights, query_line_map, url):
     comment += "</details>"
     return comment
 
-def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map, url):
+def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map, url1):
     try:
         url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
 
@@ -273,7 +273,7 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
             events = entry.get('insights', [])
             
             if query and events:
-                comment = format_comment(query, events, query_line_map, url)
+                comment = format_comment(query, events, query_line_map, url1)
                 payload = {"body": "{}".format(comment)}
                 response = requests.post(url, headers=headers, json=payload)
 
@@ -365,7 +365,7 @@ def update_comment_status(query, status):
         update_payload = {"body": updated_comment_body}
         update_response = requests.patch(update_url, headers=headers, json=update_payload)
 
-def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map, url):
+def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map, url1):
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Accept": "application/vnd.github.v3+json",
@@ -395,7 +395,7 @@ def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_ma
 
                 if query and events:
                     # Create the comment body
-                    comment_body = format_comment(query, events, query_line_map, url)
+                    comment_body = format_comment(query, events, query_line_map, url1)
     
                     # Add the comment to the pull request
                     comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
