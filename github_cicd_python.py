@@ -184,10 +184,8 @@ def get_data_anchor(html_content, line_number):
     try:
         # Parse the HTML content using BeautifulSoup
         soup = BeautifulSoup(html_content, 'html.parser')
-        print("soup",soup)
         # Find the <td> element with the corresponding data-line-number attribute
         line_td = soup.find('td', {'data-line-number': str(line_number)})
-        print("line_td",line_td)
         if line_td:
             # Extract the data-anchor value from the id attribute
             data_anchor = line_td.get('id')
@@ -219,10 +217,8 @@ def format_comment(query, insights, query_line_map, url):
     comment += "| --- | --- | --- | --- | --- |\n"
     
     # Get HTML content of the page
-    print("url",url)
     
     html_content = get_html_content(url)
-    print("html_content",html_content)
     
     # Add insights to the table
     for idx, insight in enumerate(insights, start=1):
@@ -243,7 +239,8 @@ def format_comment(query, insights, query_line_map, url):
                 data_anchor = get_data_anchor(html_content, line_no)
                 if data_anchor:
                     url_with_anchor = generate_url_for_line_change(url, data_anchor)
-                    navigate_button = f"<button onclick=\"window.location.href='{url_with_anchor}'\">Go to line {line_no}</button>"
+                    print("url_with_anchor",url_with_anchor)
+                    navigate_button = f" ([Navigate to line {line_no}]({url_with_anchor}))"
                 else:
                     navigate_button = f"(Line {line_no})"
         
