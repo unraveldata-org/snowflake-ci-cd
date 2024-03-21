@@ -184,11 +184,14 @@ def get_data_anchor(html_content, line_number):
     try:
         # Parse the HTML content using BeautifulSoup
         soup = BeautifulSoup(html_content, 'html.parser')
+        print("soup",soup)
         # Find the <td> element with the corresponding data-line-number attribute
         line_td = soup.find('td', {'data-line-number': str(line_number)})
+        print("line_td",line_td)
         if line_td:
             # Extract the data-anchor value from the id attribute
             data_anchor = line_td.get('id')
+            print("data_anchor",data_anchor)
             return data_anchor
         return None
     except Exception as e:
@@ -216,7 +219,10 @@ def format_comment(query, insights, query_line_map, url):
     comment += "| --- | --- | --- | --- | --- |\n"
     
     # Get HTML content of the page
+    print("url",url)
+    
     html_content = get_html_content(url)
+    print("html_content",html_content)
     
     # Add insights to the table
     for idx, insight in enumerate(insights, start=1):
@@ -390,7 +396,6 @@ def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_ma
                 if query and events:
                     # Create the comment body
                     comment_body = format_comment(query, events, query_line_map, url)
-                    print(f"Comment Body:\n{comment_body}")
     
                     # Add the comment to the pull request
                     comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
