@@ -234,15 +234,18 @@ def format_comment(query, insights, query_line_map, url):
                 endline, count = query_line_map.get(query, [(0, 0)])[0]  # Default to [(0, 0)] if query not found in map
                 line_no = endline - (count - int(detail_parts[1].strip()))
                 detail = f"{detail_parts[0]}at line {line_no}"
+
+        else:
+            line_no, count = query_line_map.get(query, [(0, 0)])[0]
                 
-                # Generate URL for navigating to the specific line
-                data_anchor = get_data_anchor(html_content, line_no)
-                if data_anchor:
-                    url_with_anchor = generate_url_for_line_change(url, data_anchor)
-                    print("url_with_anchor",url_with_anchor)
-                    navigate_button = f'<a href="{url_with_anchor}" style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Click here</a>'
-                else:
-                    navigate_button = f"(Line {line_no})"
+        # Generate URL for navigating to the specific line
+        data_anchor = get_data_anchor(html_content, line_no)
+        if data_anchor:
+            url_with_anchor = generate_url_for_line_change(url, data_anchor)
+            print("url_with_anchor",url_with_anchor)
+            navigate_button = f"[**↗️Navigate to line {line_no}**]({url_with_anchor})"
+        else:
+            navigate_button = f"(Line {line_no})"
         
         # Add a dash if the 'at line' condition is false
         if not navigate_button:
