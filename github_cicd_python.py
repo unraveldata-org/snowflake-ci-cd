@@ -438,7 +438,7 @@ if __name__ == "__main__":
         unravel_url = os.getenv("UNRAVEL_URL")
         unravel_token = os.getenv("UNRAVEL_JWT_TOKEN")
         # Extract SQL queries
-        url = f'https://api.github.com/repos/{repo_name}/pulls/{pr_number}/files'
+        url1 = f'https://github.com/{repo_name}/pulls/{pr_number}/files'
         
         for filename, content in file_content.items():
             
@@ -456,7 +456,7 @@ if __name__ == "__main__":
         else:
             print(f"SQL Queries processing failed. API Response: {api_response}")
         
-        post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map, url)
+        post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map, url1)
         #print(post_response)
     else:
         file_content=get_raw_file_content()
@@ -482,7 +482,7 @@ if __name__ == "__main__":
         unravel_url = os.getenv("UNRAVEL_URL")
         unravel_token = os.getenv("UNRAVEL_JWT_TOKEN")
 
-        url = f'https://api.github.com/repos/{repo_name}/pulls/{pr_number}/files'
+        url1 = f'https://github.com/{repo_name}/pulls/{pr_number}/files'
         # Extract SQL queries
         for filename, content in file_content.items():
             
@@ -498,4 +498,4 @@ if __name__ == "__main__":
             print(f"SQL Queries processing failed. API Response: {api_response}")
                 
         update_comments(api_response, existing_comments)
-        post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map, url)
+        post_comment_on_pr_query_wise(api_response, existing_comments, query_line_map, url1)
