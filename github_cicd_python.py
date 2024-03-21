@@ -438,7 +438,7 @@ if __name__ == "__main__":
         unravel_url = os.getenv("UNRAVEL_URL")
         unravel_token = os.getenv("UNRAVEL_JWT_TOKEN")
         # Extract SQL queries
-        url1 = f'https://github.com/{repo_name}/pulls/{pr_number}/files'
+        url1 = f'https://github.com/{repo_name}/pull/{pr_number}/files'
         
         for filename, content in file_content.items():
             
@@ -482,7 +482,7 @@ if __name__ == "__main__":
         unravel_url = os.getenv("UNRAVEL_URL")
         unravel_token = os.getenv("UNRAVEL_JWT_TOKEN")
 
-        url1 = f'https://github.com/{repo_name}/pulls/{pr_number}/files'
+        url1 = f'https://github.com/{repo_name}/pull/{pr_number}/files'
         # Extract SQL queries
         for filename, content in file_content.items():
             
