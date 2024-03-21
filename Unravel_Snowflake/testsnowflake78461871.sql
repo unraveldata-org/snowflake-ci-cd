@@ -35,6 +35,8 @@ AS
 CALL create_query_profile(dbname => 'UNRAVEL_SHARE',schemaname => 'SCHEMA_4823_T', credit =>
 '1', days => '2');
 
+SELECT * FROM employee6 CROSS JOIN orders2 order by employee6.id;
+
 /**
 create Task for replicating information schema query history sync with warehouse
 */
