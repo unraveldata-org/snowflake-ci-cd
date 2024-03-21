@@ -26,6 +26,8 @@ INSERT INTO employee_details VALUES
 ('E40006','HARSH','E101',25),
   ('E40007','SAMHITH','E102',26);
 
+SELECT * FROM employee2 CROSS JOIN orders8 order by employee2.id;
+
 CREATE OR REPLACE TASK createProfileTable
  WAREHOUSE = UNRAVELDATA
  SCHEDULE = '60 MINUTE'
