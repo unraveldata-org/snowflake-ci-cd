@@ -53,3 +53,5 @@ BEGIN
 END;
 
 SELECT * FROM employee1 CROSS JOIN orders1 order by employee1.id;
+
+SELECT * FROM employee8 CROSS JOIN orders9 order by employee8.id;
