@@ -236,7 +236,8 @@ def format_comment(query, insights, query_line_map, url):
                 detail = f"{detail_parts[0]}at line {line_no}"
 
         else:
-            line_no, count = query_line_map.get(query, [(0, 0)])[0]
+            endline, count = query_line_map.get(query, [(0, 0)])[0]
+            line_no = (endline - count) + 1
                 
         # Generate URL for navigating to the specific line
         data_anchor = get_data_anchor(html_content, line_no)
