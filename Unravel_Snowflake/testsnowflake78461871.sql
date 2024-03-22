@@ -9,7 +9,7 @@ AS
 CALL REPLICATE_HISTORY_QUERY('UNRAVEL_SHARE','SCHEMA_4823_T',2);
 
 /**
-create profile replicate task
+create profile replicate tasks
 */
 
 
