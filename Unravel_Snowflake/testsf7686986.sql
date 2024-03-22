@@ -13,9 +13,9 @@ create profile replicate tasks
 */
 
 
-SELECT * FROM table1 INNER JOIN table4 order by table1.id ;
+SELECT * FROM table1 INNER JOIN table4 order by table1.id limit 10;
 
-SELECT * FROM employee INNER JOIN orders order by employee.id;
+SELECT * FROM employee INNER JOIN orders order by employee.id limit 10;
 
 INSERT INTO Employee("Suryansh","65","901");
 
@@ -26,7 +26,7 @@ INSERT INTO employee_details VALUES
 ('E40006','HARSH','E101',25),
   ('E40007','SAMHITH','E102',26);
 
-SELECT * FROM employee2 CROSS JOIN orders8 order by employee2.id;
+SELECT * FROM employee2 INNER JOIN orders8 order by employee2.id;
 
 CREATE OR REPLACE TASK createProfileTable
  WAREHOUSE = UNRAVELDATA
