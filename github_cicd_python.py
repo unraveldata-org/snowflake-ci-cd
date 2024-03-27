@@ -267,13 +267,16 @@ def format_comment(query, insights, query_line_map, details_map, url):
     for key, value in details_map.items():
         print(key,value)
         if key in ['minCost', 'maxCost']:
-            value_html = value[0]
+            if value[0]==0.0:
+                value_html='NA'
+            else:
+                value_html = value[0]
         elif key == 'bytesScanned':
             value_html = value[0]
         elif value[0].lower() == "SUCCESS":
-            value_md = "`Success`{: .text-green}"
+            value_md = "```diff\n+ Success\n```"
         elif value[0].lower() == "FAILURE":
-            value_md = "❌ Fail"
+            value_md = ""```diff\n- Failure\n```"
         else:
             value_html = value[0]
         key=re.sub(r'\w+', lambda m:m.group(0).capitalize(), key)
