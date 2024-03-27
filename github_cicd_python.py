@@ -276,7 +276,8 @@ def format_comment(query, insights, query_line_map, details_map, url):
             value_md = "❌ **Fail**"
         else:
             value_html = value[0]
-        comment += f"| {re.sub(r'\w+', lambda m:m.group(0).capitalize(), key)} | {value_html} |\n"
+        key=re.sub(r'\w+', lambda m:m.group(0).capitalize(), key)
+        comment += f"| {key} | {value_html} |\n"
     
     comment += "</details>"
     
