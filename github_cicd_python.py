@@ -265,6 +265,10 @@ def format_comment(query, insights, query_line_map, details_map, url):
     
     # Add details map as a table
     for key, value in details_map.items():
+        if key in ['minCost', 'maxCost']:
+        value_html = f'<span style="font-weight: bold;">{value}</span>'
+        if key == 'byteScanned':
+        value_html = bytes_to_human_readable(value)
         if value.lower() == "success":
         value_html = f'<span style="color:green">{value}</span>'
         elif value.lower() == "fail":
@@ -276,6 +280,15 @@ def format_comment(query, insights, query_line_map, details_map, url):
     comment += "</details>"
     
     return comment
+
+def bytes_to_human_readable(bytes):
+    units = ['B', 'KB', 'MB', 'GB', 'TB']
+    unit_index = 0
+    bytes = int(bytes)  # Convert to integer
+    while bytes >= 1024 and unit_index < len(units) - 1:
+        bytes /= 1024
+        unit_index += 1
+    return f'{bytes:.2f} {units[unit_index]}'
 
 def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name, query_line_map, url1):
     try:
