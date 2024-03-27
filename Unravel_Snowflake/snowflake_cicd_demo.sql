@@ -1,10 +1,10 @@
-SELECT
-        c.c_name as "Customer Name",
-        o.O_ORDERSTATUS as "Order Status"
-    FROM
-        ORDERS as o
-    INNER JOIN CUSTOMER as c ORDER BY c.c_name LIMIT 100;
+SELECT * FROM employee6 CROSS JOIN orders2 order by employee6.id;
 
-select WR_ORDER_NUMBER,WR_ITEM_SK from sfsalesshared_sfc_samples_va3_sample_data.tpcds_sf100tcl.web_returns where wr_fee >= 0.22 order by WR_ORDER_NUMBER,WR_ITEM_SK ;
 
-select WR_ORDER_NUMBER,WR_ITEM_SK from sfsalesshared_sfc_samples_va3_sample_data.tpcds_sf100tcl.web_returns where wr_fee >= 0.22 limit 100;
+SELECT * 
+ FROM employee6912 
+ CROSS JOIN orders2721 
+ order by employee6912.id;
+
+
+SELECT * FROM table1 INNER JOIN table4 order by table1.id limit 10;
