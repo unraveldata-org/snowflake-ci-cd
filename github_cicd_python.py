@@ -269,15 +269,15 @@ def format_comment(query, insights, query_line_map, details_map, url):
         if key in ['minCost', 'maxCost']:
             value_html = value[0]
         elif key == 'bytesScanned':
-            value_html = bytes_to_human_readable(value[0])
-        elif value[0].lower() == "success":
+            value_html = value[0]
+        elif value[0].lower() == "SUCCESS":
             value_md = "`Success`{: .text-green}"
-        elif value[0].lower() == "fail":
-            value_md = "❌ **Fail**"
+        elif value[0].lower() == "FAILURE":
+            value_md = "❌ Fail"
         else:
             value_html = value[0]
         key=re.sub(r'\w+', lambda m:m.group(0).capitalize(), key)
-        comment += f"| {key} | {value_html} |\n"
+        comment += f"| {key} | **{value_html}** |\n"
     
     comment += "</details>"
     
