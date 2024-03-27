@@ -265,7 +265,13 @@ def format_comment(query, insights, query_line_map, details_map, url):
     
     # Add details map as a table
     for key, value in details_map.items():
-        comment += f"| {key} | {value} |\n"
+        if value.lower() == "success":
+        value_html = f'<span style="color:green">{value}</span>'
+        elif value.lower() == "fail":
+            value_html = f'<span style="color:red">{value}</span>'
+        else:
+            value_html = value
+        comment += f"| re.sub(r'\w+', lambda m:m.group(0).capitalize(), {key}) | {value_html} |\n"
     
     comment += "</details>"
     
