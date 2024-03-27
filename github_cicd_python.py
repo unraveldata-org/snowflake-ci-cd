@@ -265,11 +265,12 @@ def format_comment(query, insights, query_line_map, details_map, url):
     
     # Add details map as a table
     for key, value in details_map.items():
+        print(key,value)
         if key in ['minCost', 'maxCost']:
             value_html = f'<span style="font-weight: bold;">{value[0]}</span>'
-        if key == 'byteScanned':
+        elif key == 'bytesScanned':
             value_html = bytes_to_human_readable(value[0])
-        if value[0].lower() == "success":
+        elif value[0].lower() == "success":
             value_html = f'<span style="color:green">{value[0]}</span>'
         elif value[0].lower() == "fail":
             value_html = f'<span style="color:red">{value[0]}</span>'
