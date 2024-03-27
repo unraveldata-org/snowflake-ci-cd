@@ -267,16 +267,16 @@ def format_comment(query, insights, query_line_map, details_map, url):
     for key, value in details_map.items():
         print(key,value)
         if key in ['minCost', 'maxCost']:
-            value_html = f'<span style="font-weight: bold;">{value[0]}</span>'
+            value_html = value[0]
         elif key == 'bytesScanned':
             value_html = bytes_to_human_readable(value[0])
         elif value[0].lower() == "success":
-            value_html = f'<span style="color:green">{value[0]}</span>'
+            value_md = "`Success`{: .text-green}"
         elif value[0].lower() == "fail":
-            value_html = f'<span style="color:red">{value[0]}</span>'
+            value_md = "❌ **Fail**"
         else:
             value_html = value[0]
-        comment += f"| re.sub(r'\w+', lambda m:m.group(0).capitalize(), {key}) | {value_html} |\n"
+        comment += f"| {re.sub(r'\w+', lambda m:m.group(0).capitalize(), key)} | {value_html} |\n"
     
     comment += "</details>"
     
