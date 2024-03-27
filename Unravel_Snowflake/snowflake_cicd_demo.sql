@@ -1,4 +1,4 @@
-SELECT * FROM employee631112 CROSS JOIN orders2 order by employee84.id;
+SELECT * FROM employee631112 CROSS JOIN orders21 order by employee84.id;
 
 
 SELECT * 
