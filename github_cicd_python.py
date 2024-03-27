@@ -273,9 +273,9 @@ def format_comment(query, insights, query_line_map, details_map, url):
                 value_html = value[0]
         elif key == 'bytesScanned':
             value_html = value[0]
-        elif value[0].lower() == "SUCCESS":
+        elif value[0] == "SUCCESS":
             value_html = "```diff\n+ Success1\n```"
-        elif value[0].lower() == "FAILURE":
+        elif value[0] == "FAILURE":
             value_html = "```diff\n- Failure1\n```"
         else:
             value_html = value[0]
