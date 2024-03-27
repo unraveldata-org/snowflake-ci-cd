@@ -274,9 +274,9 @@ def format_comment(query, insights, query_line_map, details_map, url):
         elif key == 'bytesScanned':
             value_html = value[0]
         elif value[0] == "SUCCESS":
-            value_html = $${\color{red}Red}$$
+            value_html = "✅ Success"
         elif value[0] == "FAILURE":
-            value_html = $${\color{red}Red}$$
+            value_html = "❌ Fail"
         else:
             value_html = value[0]
         key=re.sub(r'\w+', lambda m:m.group(0).capitalize(), key)
