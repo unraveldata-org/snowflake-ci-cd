@@ -7,6 +7,8 @@ SELECT *
  CROSS JOIN orders2721 
  order by employee6912.id;
 
+Alter Table Employee;
+
 
 SELECT * FROM table131111212 INNER JOIN table4 order by table1.id limit 10;
 
