@@ -270,7 +270,7 @@ def format_comment(query, insights, query_line_map, details_map, url):
             if value[0]==0.0:
                 value_html='NA'
             else:
-                value_html = f'{round(value[0], 6):.6f}$'
+                value_html = f'$ {round(value[0], 6):.6f}'
             if key =='minCost':
                 key='Min Estimated Cost'
             else:
