@@ -207,54 +207,196 @@ def generate_url_for_line_change(url, data_anchor):
         print(f"An error occurred while generating URL: {e}")
         return None
 
-def format_comment(query, insights, query_line_map, details_map, url):
+def format_comment(query, insights, profile_insights, query_line_map, details_map, url):
     logo_url = 'https://www.unraveldata.com/wp-content/themes/unravel-child/src/images/unLogo.svg'
-    
-    comment = f"![Logo]({logo_url})\n\n📌 **Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊 Insights</summary>\n\n"
-    
-    # Create a table header
-    comment += "| # | Name | Action | Detail | Let's Navigate |\n"
-    comment += "| --- | --- | --- | --- | --- |\n"
-    
-    # Get HTML content of the page
-    
-    html_content = get_html_content(url)
-    
-    # Add insights to the table
-    for idx, insight in enumerate(insights, start=1):
-        name = insight.get('name', '')
-        action = insight.get('action', '')
-        detail = insight.get('detail', '')
+    if(insights and not profile_insights):
+        comment = f"![Logo]({logo_url})\n\n📌 **Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊 Parser Based Insights</summary>\n\n"
         
-        navigate_button = ""  # Default value for the navigation column
+        # Create a table header
+        comment += "| # | Name | Action | Detail | Let's Navigate |\n"
+        comment += "| --- | --- | --- | --- | --- |\n"
         
-        if 'at line' in detail:
-            detail_parts = detail.split('at line')
-            if len(detail_parts) == 2:
-                endline, count = query_line_map.get(query, [(0, 0)])[0]  # Default to [(0, 0)] if query not found in map
-                line_no = endline - (count - int(detail_parts[1].strip()))
-                detail = f"{detail_parts[0]}at line {line_no}"
+        # Get HTML content of the page
+        
+        html_content = get_html_content(url)
+        
+        # Add insights to the table
+        for idx, insight in enumerate(insights, start=1):
+            name = insight.get('name', '')
+            action = insight.get('action', '')
+            detail = insight.get('detail', '')
+            
+            navigate_button = ""  # Default value for the navigation column
+            
+            if 'at line' in detail:
+                detail_parts = detail.split('at line')
+                if len(detail_parts) == 2:
+                    endline, count = query_line_map.get(query, [(0, 0)])[0]  # Default to [(0, 0)] if query not found in map
+                    line_no = endline - (count - int(detail_parts[1].strip()))
+                    detail = f"{detail_parts[0]}at line {line_no}"
+    
+            else:
+                endline, count = query_line_map.get(query, [(0, 0)])[0]
+                line_no = (endline - count) + 1
+                    
+            # Generate URL for navigating to the specific line
+            data_anchor = get_data_anchor(html_content, line_no)
+            if data_anchor:
+                url_with_anchor = generate_url_for_line_change(url, data_anchor)
+                print("url_with_anchor",url_with_anchor)
+                navigate_button = f"[**↗️Navigate to line {line_no}**]({url_with_anchor})"
+            else:
+                navigate_button = f"(Line {line_no})"
+            
+            # Add a dash if the 'at line' condition is false
+            if not navigate_button:
+                navigate_button = "-"
+                    
+            comment += f"| {idx} | {name} | {action} | {detail} | {navigate_button} |\n"
 
-        else:
-            endline, count = query_line_map.get(query, [(0, 0)])[0]
-            line_no = (endline - count) + 1
-                
-        # Generate URL for navigating to the specific line
-        data_anchor = get_data_anchor(html_content, line_no)
-        if data_anchor:
-            url_with_anchor = generate_url_for_line_change(url, data_anchor)
-            print("url_with_anchor",url_with_anchor)
-            navigate_button = f"[**↗️Navigate to line {line_no}**]({url_with_anchor})"
-        else:
-            navigate_button = f"(Line {line_no})"
+        comment += "</details>"
         
-        # Add a dash if the 'at line' condition is false
-        if not navigate_button:
-            navigate_button = "-"
-                
-        comment += f"| {idx} | {name} | {action} | {detail} | {navigate_button} |\n"
+    if(profile_insights and not insights):
+        comment = f"![Logo]({logo_url})\n\n📌 **Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊 Profile Based Insights</summary>\n\n"
+        
+        # Create a table header
+        comment += "| # | Name | Action | Detail | Let's Navigate |\n"
+        comment += "| --- | --- | --- | --- | --- |\n"
+        
+        # Get HTML content of the page
+        
+        html_content = get_html_content(url)
+        
+        # Add insights to the table
+        for idx, insight in enumerate(profile_insights, start=1):
+            name = insight.get('name', '')
+            action = insight.get('action', '')
+            detail = insight.get('detail', '')
+            
+            navigate_button = ""  # Default value for the navigation column
+            
+            if 'at line' in detail:
+                detail_parts = detail.split('at line')
+                if len(detail_parts) == 2:
+                    endline, count = query_line_map.get(query, [(0, 0)])[0]  # Default to [(0, 0)] if query not found in map
+                    line_no = endline - (count - int(detail_parts[1].strip()))
+                    detail = f"{detail_parts[0]}at line {line_no}"
     
-    comment += "</details>"
+            else:
+                endline, count = query_line_map.get(query, [(0, 0)])[0]
+                line_no = (endline - count) + 1
+                    
+            # Generate URL for navigating to the specific line
+            data_anchor = get_data_anchor(html_content, line_no)
+            if data_anchor:
+                url_with_anchor = generate_url_for_line_change(url, data_anchor)
+                print("url_with_anchor",url_with_anchor)
+                navigate_button = f"[**↗️Navigate to line {line_no}**]({url_with_anchor})"
+            else:
+                navigate_button = f"(Line {line_no})"
+            
+            # Add a dash if the 'at line' condition is false
+            if not navigate_button:
+                navigate_button = "-"
+                    
+            comment += f"| {idx} | {name} | {action} | {detail} | {navigate_button} |\n"
+
+        comment += "</details>"
+
+    if(profile_insights and insights):
+        
+        comment = f"![Logo]({logo_url})\n\n📌 **Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊 Parser Based Insights</summary>\n\n"
+        
+        # Create a table header
+        comment += "| # | Name | Action | Detail | Let's Navigate |\n"
+        comment += "| --- | --- | --- | --- | --- |\n"
+        
+        # Get HTML content of the page
+        
+        html_content = get_html_content(url)
+        
+        # Add insights to the table
+        for idx, insight in enumerate(insights, start=1):
+            name = insight.get('name', '')
+            action = insight.get('action', '')
+            detail = insight.get('detail', '')
+            
+            navigate_button = ""  # Default value for the navigation column
+            
+            if 'at line' in detail:
+                detail_parts = detail.split('at line')
+                if len(detail_parts) == 2:
+                    endline, count = query_line_map.get(query, [(0, 0)])[0]  # Default to [(0, 0)] if query not found in map
+                    line_no = endline - (count - int(detail_parts[1].strip()))
+                    detail = f"{detail_parts[0]}at line {line_no}"
+    
+            else:
+                endline, count = query_line_map.get(query, [(0, 0)])[0]
+                line_no = (endline - count) + 1
+                    
+            # Generate URL for navigating to the specific line
+            data_anchor = get_data_anchor(html_content, line_no)
+            if data_anchor:
+                url_with_anchor = generate_url_for_line_change(url, data_anchor)
+                print("url_with_anchor",url_with_anchor)
+                navigate_button = f"[**↗️Navigate to line {line_no}**]({url_with_anchor})"
+            else:
+                navigate_button = f"(Line {line_no})"
+            
+            # Add a dash if the 'at line' condition is false
+            if not navigate_button:
+                navigate_button = "-"
+                    
+            comment += f"| {idx} | {name} | {action} | {detail} | {navigate_button} |\n"
+
+        comment += "</details>"
+
+        comment += f"<details>\n<summary>📊 Profile Based Insights</summary>\n\n"
+
+        # Create a table header
+        comment += "| # | Name | Action | Detail | Let's Navigate |\n"
+        comment += "| --- | --- | --- | --- | --- |\n"
+        
+        # Get HTML content of the page
+        
+        html_content = get_html_content(url)
+        
+        # Add insights to the table
+        for idx, insight in enumerate(profile_insights, start=1):
+            name = insight.get('name', '')
+            action = insight.get('action', '')
+            detail = insight.get('detail', '')
+            
+            navigate_button = ""  # Default value for the navigation column
+            
+            if 'at line' in detail:
+                detail_parts = detail.split('at line')
+                if len(detail_parts) == 2:
+                    endline, count = query_line_map.get(query, [(0, 0)])[0]  # Default to [(0, 0)] if query not found in map
+                    line_no = endline - (count - int(detail_parts[1].strip()))
+                    detail = f"{detail_parts[0]}at line {line_no}"
+    
+            else:
+                endline, count = query_line_map.get(query, [(0, 0)])[0]
+                line_no = (endline - count) + 1
+                    
+            # Generate URL for navigating to the specific line
+            data_anchor = get_data_anchor(html_content, line_no)
+            if data_anchor:
+                url_with_anchor = generate_url_for_line_change(url, data_anchor)
+                print("url_with_anchor",url_with_anchor)
+                navigate_button = f"[**↗️Navigate to line {line_no}**]({url_with_anchor})"
+            else:
+                navigate_button = f"(Line {line_no})"
+            
+            # Add a dash if the 'at line' condition is false
+            if not navigate_button:
+                navigate_button = "-"
+                    
+            comment += f"| {idx} | {name} | {action} | {detail} | {navigate_button} |\n"
+
+        comment += "</details>"
+    
 
     # Add Details section
     comment += f"<details>\n<summary>📋 Details</summary>\n\n"
@@ -320,17 +462,18 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
         for entry in content_data:
             query = entry.get('query', '')
             events = entry.get('insights', [])
+            profile_events = entry.get('profileInsights', [])
 
             details_map = {}
             # Extract key-value pairs excluding 'query' and 'insights'
-            key_value_pairs = {key: value for key, value in entry.items() if key not in ['query', 'insights']}
+            key_value_pairs = {key: value for key, value in entry.items() if key not in ['query', 'insights', 'profileInsights']}
             
             # Add key-value pairs to the details_map
             for key, value in key_value_pairs.items():
                 details_map.setdefault(key, []).append(value)
             
-            if query and events:
-                comment = format_comment(query, events, query_line_map, details_map, url1)
+            if query and (events or profile_events):
+                comment = format_comment(query, events, profile_events, query_line_map, details_map, url1)
                 payload = {"body": "{}".format(comment)}
                 response = requests.post(url, headers=headers, json=payload)
 
