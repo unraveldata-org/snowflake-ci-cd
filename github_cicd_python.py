@@ -405,7 +405,7 @@ def update_comment_status(query, status):
     comment_id = None
     print(comments)
     for comment in comments:
-        if query in comment['body']:
+        if query in comment['body'] and "⚙️Status - ✅Resolved" not in comment['body']:
             comment_id = comment['id']
             break
 
