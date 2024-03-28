@@ -210,7 +210,7 @@ def generate_url_for_line_change(url, data_anchor):
 def format_comment(query, insights, query_line_map, details_map, url):
     logo_url = 'https://www.unraveldata.com/wp-content/themes/unravel-child/src/images/unLogo.svg'
     
-    comment = f"![Logo]({logo_url})\n\n📌 **Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊 **Insights**</summary>\n\n"
+    comment = f"![Logo]({logo_url})\n\n📌 **Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊 Insights</summary>\n\n"
     
     # Create a table header
     comment += "| # | Name | Action | Detail | Let's Navigate |\n"
@@ -257,7 +257,7 @@ def format_comment(query, insights, query_line_map, details_map, url):
     comment += "</details>"
 
     # Add Details section
-    comment += "<details>\n<summary>📋 **Details**</summary>\n\n"
+    comment += f"<details>\n<summary>📋 Details</summary>\n\n"
     
     # Create a table header for Details
     comment += "| # | Attribute | Value |\n"
@@ -270,7 +270,7 @@ def format_comment(query, insights, query_line_map, details_map, url):
             if value[0]==0.0:
                 value_html='NA'
             else:
-                value_html = f'{round(value[0], 6):.6f}'
+                value_html = f'{round(value[0], 6):.6f}$'
             if key =='minCost':
                 key='Min Estimated Cost'
             else:
