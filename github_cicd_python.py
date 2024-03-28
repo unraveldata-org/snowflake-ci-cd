@@ -210,7 +210,7 @@ def generate_url_for_line_change(url, data_anchor):
 def format_comment(query, insights, query_line_map, details_map, url):
     logo_url = 'https://www.unraveldata.com/wp-content/themes/unravel-child/src/images/unLogo.svg'
     
-    comment = f"![Logo]({logo_url})\n\n📌**Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>📊Insights</summary>\n\n"
+    comment = f"![Logo]({logo_url})\n\n**📌** **Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>**📊** Insights</summary>\n\n"
     
     # Create a table header
     comment += "| # | Name | Action | Detail | Let's Navigate |\n"
@@ -257,14 +257,14 @@ def format_comment(query, insights, query_line_map, details_map, url):
     comment += "</details>"
 
     # Add Details section
-    comment += "<details>\n<summary>📋Details</summary>\n\n"
+    comment += "<details>\n<summary>**📋** Details</summary>\n\n"
     
     # Create a table header for Details
-    comment += "| Key | Value |\n"
-    comment += "| --- | --- |\n"
+    comment += "| # | Attribute | Value |\n"
+    comment += "| --- | --- | --- |\n"
     
     # Add details map as a table
-    for key, value in details_map.items():
+    for idx, (key, value) in enumerate(details_map.items(), start=1):
         # key=re.sub(r'\w+', lambda m:m.group(0).capitalize(), key)
         if key in ['minCost', 'maxCost']:
             if value[0]==0.0:
@@ -290,7 +290,7 @@ def format_comment(query, insights, query_line_map, details_map, url):
         else:
             value_html = value[0]
         
-        comment += f"| {key} | **{value_html}** |\n"
+        comment += f"| {idx} | {key} | **{value_html}** |\n"
     
     comment += "</details>"
     
