@@ -590,10 +590,11 @@ def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_ma
         for entry in content_data:
             query = entry.get('query', '')
             events = entry.get('insights', [])
+            profile_events = entry.get('profileInsights', [])
 
             details_map = {}
             # Extract key-value pairs excluding 'query' and 'insights'
-            key_value_pairs = {key: value for key, value in entry.items() if key not in ['query', 'insights']}
+            key_value_pairs = {key: value for key, value in entry.items() if key not in ['query', 'insights', 'profileInsights']}
             
             # Add key-value pairs to the details_map
             for key, value in key_value_pairs.items():
@@ -602,9 +603,9 @@ def post_comment_on_pr_query_wise(api_response, existing_comments, query_line_ma
             # Check if the query is not in existing_queries
             if query not in extracted_queriesq:
 
-                if query and events:
+                if query and (events or profile_events):
                     # Create the comment body
-                    comment_body = format_comment(query, events, query_line_map, details_map, url1)
+                    comment_body = format_comment(query, events, profile_events, query_line_map, details_map, url1)
     
                     # Add the comment to the pull request
                     comments_url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
