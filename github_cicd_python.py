@@ -403,6 +403,7 @@ def update_comment_status(query, status):
     comments_response = requests.get(comments_url, headers=headers)
     comments = comments_response.json()
     comment_id = None
+    print(comments)
     for comment in comments:
         if query in comment['body']:
             comment_id = comment['id']
