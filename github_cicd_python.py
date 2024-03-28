@@ -265,21 +265,31 @@ def format_comment(query, insights, query_line_map, details_map, url):
     
     # Add details map as a table
     for key, value in details_map.items():
-        print(key,value)
+        # key=re.sub(r'\w+', lambda m:m.group(0).capitalize(), key)
         if key in ['minCost', 'maxCost']:
             if value[0]==0.0:
                 value_html='NA'
             else:
                 value_html = value[0]
+            if key =='minCost':
+                key='Min Estimated Cost'
+            else:
+                key='Max Estimated Cost'
         elif key == 'bytesScanned':
-            value_html = value[0]
+            if(value[0]==-1):
+                value_html='NA'
+            else:
+                value_html = bytes_to_human_readable(value[0])
+            key='Bytes Scanned'
         elif value[0] == "SUCCESS":
-            value_html = "✅ Success"
+            value_html = "✅"
+            key='Compilation'
         elif value[0] == "FAILURE":
-            value_html = "❌ Fail"
+            value_html = "❌"
+            key='Compilation'
         else:
             value_html = value[0]
-        key=re.sub(r'\w+', lambda m:m.group(0).capitalize(), key)
+        
         comment += f"| {key} | **{value_html}** |\n"
     
     comment += "</details>"
